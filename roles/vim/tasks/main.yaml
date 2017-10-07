@@ -1,0 +1,17 @@
+---
+- name: Create .vim Directory
+  file: 
+    path: $HOME/.vim
+    state: directory
+- name: Create .vim/autoload Directory
+  file: 
+    path: $HOME/.vim/autoload
+    state: directory
+- name:
+  get_url:
+    url: https://raw.githubusercontent.com/stockhausenj/vim-plug/master/plug.vim
+    dest: $HOME/.vim/autoload/plug.vim
+- name: Update vimrc
+  template:
+    src: vimrc.j2
+    dest: $HOME/.vimrc

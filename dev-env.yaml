@@ -1,0 +1,10 @@
+# ansible-playbook -i "localhost," -c local dev-env.yaml
+---
+- hosts: all
+  tasks: 
+    - include_role:
+        name: vim
+      vars:
+        vim_plugins: ['stockhausenj/vim-go']
+    - include_role:
+        name: golang
