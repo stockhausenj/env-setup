@@ -1,12 +1,7 @@
-- name: Create golang Install Directory
-  file:
-    path: /usr/local/go
-    state: directory
-  become: yes
 - name: Install Go
   unarchive:
     src: https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz
-    dest: /usr/local/go
+    dest: /usr/local
     remote_src: yes
   become: yes
 - name: Update PATH Environment Variable
