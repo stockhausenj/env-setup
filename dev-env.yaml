@@ -10,6 +10,6 @@
     - include_role:
         name: vim
       vars:
-        vim_plugins: ['stockhausenj/vim-go']
+        vim_plugins: ['stockhausenj/vim-go', 'leafgarland/typescript-vim']
     - include_role:
         name: golang
