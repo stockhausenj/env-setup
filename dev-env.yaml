@@ -3,6 +3,11 @@
 - hosts: all
   tasks: 
     - include_role:
+        name: git
+      vars:
+        git_user_email: 'jay.stockhausen@gmail.com'
+        git_user_name: 'Jay Stockhausen'
+    - include_role:
         name: vim
       vars:
         vim_plugins: ['stockhausenj/vim-go']

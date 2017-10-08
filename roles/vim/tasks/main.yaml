@@ -3,14 +3,21 @@
   file: 
     path: $HOME/.vim
     state: directory
-- name: Create .vim/autoload Directory
+- name: Create .vim Directories
   file: 
-    path: $HOME/.vim/autoload
+    path: $HOME/.vim/{{ item }}
     state: directory
-- name:
+  with_items:
+  - autoload
+  - colors
+- name: Download vim-plugin
   get_url:
     url: https://raw.githubusercontent.com/stockhausenj/vim-plug/master/plug.vim
     dest: $HOME/.vim/autoload/plug.vim
+- name: Download solarized Colors
+  get_url:
+    url: https://raw.githubusercontent.com/stockhausenj/vim-colors-solarized/master/colors/solarized.vim
+    dest: $HOME/.vim/colors/solarized.vim
 - name: Update vimrc
   template:
     src: vimrc.j2
