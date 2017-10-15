@@ -1,0 +1,8 @@
+# ansible-playbook -i "localhost," -c local jenkins.yaml
+#
+# Tested on CentOS7
+---
+- hosts: all
+  tasks: 
+    - include_role:
+        name: jenkins
