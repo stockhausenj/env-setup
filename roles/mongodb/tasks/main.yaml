@@ -10,6 +10,13 @@
 - name: Install MongoDB
   yum: name=mongodb-org state=latest
   become: yes
+- name: Customize Conf
+  copy: 
+    src: mongod.conf
+    dest: /etc/mongod.conf
+    owner: root
+    group: root
+    mode: 0644
 - name: start and enable jenkins
   systemd:
     name: mongod
