@@ -9,8 +9,10 @@
     key: https://www.mongodb.org/static/pgp/server-3.4.asc
 - name: Install MongoDB
   yum: name=mongodb-org state=latest
+  become: yes
 - name: start and enable jenkins
   systemd:
     name: mongod
     state: started
     enabled: True
+  become: yes
