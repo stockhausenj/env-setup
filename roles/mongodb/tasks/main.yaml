@@ -3,10 +3,12 @@
   copy:
     src: mongodb-org.repo
     dest: /etc/yum.repos.d/mongodb-org.repo
+  become: yes
 - name: Import MongoDB GPG Key
   rpm_key:
     state: present
     key: https://www.mongodb.org/static/pgp/server-3.4.asc
+  become: yes
 - name: Install MongoDB
   yum: name=mongodb-org state=latest
   become: yes
@@ -17,6 +19,7 @@
     owner: root
     group: root
     mode: 0644
+  become: yes
 - name: start and enable jenkins
   systemd:
     name: mongod
