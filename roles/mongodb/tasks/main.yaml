@@ -1,37 +1,38 @@
 ---
 - name: Add MongoDB Repo (CentOS)
+  when: ansible_distribution == "CentOS"
   copy:
     src: mongodb-org.repo
     dest: /etc/yum.repos.d/mongodb-org.repo
   become: yes
-  when: ansible_distribution == "CentOS"
 - name: Add MongoDB Repo (Ubuntu)
+  when: ansible_distribution == "Ubuntu"
   copy:
     src: mongodb-org-3.4.list
     dest: /etc/apt/sources.list.d/mongodb-org-3.4.list
   become: yes
-  when: ansible_distribution == "Ubuntu"
 - name: Import MongoDB GPG Key (CentOS)
+  when: ansible_distribution == "CentOS"
   rpm_key:
     state: present
     key: https://www.mongodb.org/static/pgp/server-3.4.asc
   become: yes
-  when: ansible_distribution == "CentOS"
 - name: Import MongoDB GPG Key (Ubuntu)
+  when: ansible_distribution == "Ubuntu"
   shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6 && apt-get update
   become: yes
-  when: ansible_distribution == "Ubuntu"
 - name: Install MongoDB (CentOS)
+  when: ansible_distribution == "CentOS"
   yum: name=mongodb-org state=latest
   become: yes
-  when: ansible_distribution == "CentOS"
 - name: Install MongoDB (Ubuntu)
+  when: ansible_distribution == "Ubuntu"
   apt:
     name: mongodb-org
     state: present
   become: yes
-  when: ansible_distribution == "Ubuntu"
 - name: Customize Conf
+  when: ansible_distribution == "CentOS"
   copy: 
     src: mongod.conf
     dest: /etc/mongod.conf
@@ -39,7 +40,6 @@
     group: root
     mode: 0644
   become: yes
-  when: ansible_distribution == "CentOS"
 - name: start and enable jenkins
   systemd:
     name: mongod

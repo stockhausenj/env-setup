@@ -1,8 +1,8 @@
-# ansible-playbook -i "localhost," -c local angular.yaml
+# ansible-playbook -i "localhost," -c local nodejs.yaml
 #
 # Tested on CentOS7, Ubuntu 16.04
 ---
 - hosts: all
   tasks: 
     - include_role:
-        name: angular
+        name: nodejs

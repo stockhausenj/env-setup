@@ -1,9 +1,0 @@
----
-- name: Install nodejs and npm
-  package:
-    name: nodejs,npm
-    state: latest
-  become: yes
-- name: Install Angular CLI
-  shell: npm install -g @angular/cli
-  become: yes

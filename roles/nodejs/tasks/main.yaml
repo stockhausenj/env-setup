@@ -1,0 +1,9 @@
+---
+- name: Install nodejs and npm
+  when: ansible_distribution == "CentOS"
+  shell: curl --silent --location https://rpm.nodesource.com/setup_6.x | sudo bash - && yum -y install nodejs
+  become: yes
+- name: Install nodejs and npm
+  when: ansible_distribution == "Ubuntu"
+  shell: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && apt-get install -y nodejs
+  become: yes
