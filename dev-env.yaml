@@ -1,6 +1,6 @@
 # ansible-playbook -i "localhost," -c local dev-env.yaml
 #
-# Tested on CentOS7
+# Tested on CentOS7, Ubuntu 16.04
 ---
 - hosts: all
   tasks: 
