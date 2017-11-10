@@ -4,6 +4,12 @@
     dest: /usr/local
     remote_src: yes
   become: yes
+- name: Ensure bash_profile Exists
+  copy:
+    content: ""
+    dest: $HOME/.bash_profile
+    force: no
+    mode: 0600
 - name: Update PATH Environment Variable
   lineinfile:
     path: $HOME/.bash_profile
@@ -17,10 +23,22 @@
   file: 
     path: $HOME/golang/bin
     state: directory
+- name: Create golang/src Directory
+  file: 
+    path: $HOME/golang/src
+    state: directory
+- name: Create golang/pkg Directory
+  file: 
+    path: $HOME/golang/pkg
+    state: directory
+- name: Create golang/bin Directory
+  file: 
+    path: $HOME/golang/bin
+    state: directory
 - name: Add GOBIN Environment Variable
   lineinfile:
     path: $HOME/.bash_profile
     regexp: '^export GOBIN'
     line: 'export GOBIN="$HOME/golang/bin"'
 - name: Load bash_profile
-  shell: source $HOME/.bash_profile
+  shell: . $HOME/.bash_profile
