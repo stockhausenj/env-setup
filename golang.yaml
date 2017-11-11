@@ -1,8 +1,0 @@
-# ansible-playbook -i "localhost," -c local golang.yaml
-#
-# Tested on CentOS7, Ubuntu 16.04
----
-- hosts: all
-  tasks: 
-    - include_role:
-        name: golang

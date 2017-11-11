@@ -4,12 +4,6 @@
     dest: /usr/local
     remote_src: yes
   become: yes
-- name: Ensure bash_profile Exists
-  copy:
-    content: ""
-    dest: $HOME/.bash_profile
-    force: no
-    mode: 0600
 - name: Update PATH Environment Variable
   lineinfile:
     path: $HOME/.bash_profile

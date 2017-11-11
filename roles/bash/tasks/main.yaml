@@ -1,0 +1,12 @@
+---
+- name: Update bash_profile
+  template:
+    src: bash_profile.j2
+    dest: $HOME/.bash_profile
+- name: Add Ubuntu Path
+  lineinfile:
+    dest: $HOME/.bash_profile
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'PATH=', line: 'PATH="$HOME/bin:$HOME/.local/bin:$PATH"' }

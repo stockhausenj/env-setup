@@ -1,9 +1,17 @@
-# ansible-playbook -i "localhost," -c local dev-env.yaml
+# ansible-playbook -i "localhost," -c local dev-env.yaml -K
+#
+# vim_plugins available:
+#   stockhausenj/emmet-vim
+#   stockhausenj/vim-javascript
+#   stockhausenj/vim-pug
+#   stockhausenj/vim-go
 #
 # Tested on CentOS7, Ubuntu 16.04
 ---
 - hosts: all
   tasks: 
+    - include_role:
+        name: bash
     - include_role:
         name: git
       vars:
@@ -12,4 +20,4 @@
     - include_role:
         name: vim
       vars:
-        vim_plugins: ['stockhausenj/emmet-vim', 'stockhausenj/vim-javascript', 'stockhausenj/vim-pug']
+        vim_plugins: ['stockhausenj/emmet-vim', 'stockhausenj/vim-javascript', 'stockhausenj/vim-pug', 'fatih/vim-go']
