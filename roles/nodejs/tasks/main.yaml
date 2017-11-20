@@ -5,5 +5,5 @@
   become: yes
 - name: Install nodejs and npm
   when: ansible_distribution == "Ubuntu"
-  shell: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && apt-get install -y nodejs
+  shell: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - && apt install -y nodejs
   become: yes
