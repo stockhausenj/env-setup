@@ -1,0 +1,7 @@
+---
+- name: Install Required
+  when: ansible_distribution == "Ubuntu"
+  become: yes
+  apt:
+    name: pylint
+    state: latest
