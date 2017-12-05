@@ -1,0 +1,12 @@
+# ansible-playbook -i inventory.yml windows.yml -u admin --ask-pass
+#
+# Tested on Windows 10
+---
+- hosts: all
+  vars:
+    ansible_port: 5986
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
+  tasks: 
+    - include_role:
+        name: stockhausenj.visual-studio-code

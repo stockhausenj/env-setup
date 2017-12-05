@@ -1,4 +1,4 @@
-# ansible-playbook -i "localhost," -c local dev-env.yaml -K
+# ansible-playbook -i "localhost," -c local linux.yml -K
 #
 # vim_plugins available:
 #   stockhausenj/emmet-vim

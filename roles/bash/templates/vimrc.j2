@@ -1,9 +1,0 @@
-colorscheme desert
-set tabstop=2
-set shiftwidth=2
-
-call plug#begin('~/.vim/plugged')
-{% for plugin in vim_plugins %}
-Plug '{{plugin}}'
-{% endfor %}
-call plug#end()
