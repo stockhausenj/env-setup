@@ -20,4 +20,4 @@
     - include_role:
         name: vim
       vars:
-        vim_plugins: ['stockhausenj/nerdtree', 'stockhausenj/emmet-vim', 'stockhausenj/vim-javascript', 'stockhausenj/vim-pug', 'fatih/vim-go']
+        vim_plugins: ['scrooloose/nerdtree', 'mattn/emmet-vim', 'pangloss/vim-javascript', 'fatih/vim-go']
