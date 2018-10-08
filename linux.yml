@@ -18,6 +18,8 @@
         git_user_email: 'jay.stockhausen@gmail.com'
         git_user_name: 'Jay Stockhausen'
     - include_role:
+        name: tmux
+    - include_role:
         name: vim
       vars:
         vim_plugins: ['scrooloose/nerdtree', 'mattn/emmet-vim', 'pangloss/vim-javascript', 'fatih/vim-go']
