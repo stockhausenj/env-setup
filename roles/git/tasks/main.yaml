@@ -27,3 +27,6 @@
   - { regexp: '^export PS1', line: 'export PS1' }
 - name: Load bashrc
   shell: . $HOME/.bashrc
+- name: Install silversearcher-ag
+  apt:
+    name: silversearcher-ag
