@@ -1,6 +1,6 @@
 - name: Install tmux plugin manager (TPM)
   git:
-    repo: ssh://git@github.com:tmux-plugins/tpm.git
+    repo: https://github.com/tmux-plugins/tpm.git
     dest: /home/ubuntu/.tmux/plugins/tpm
 - name: Copy tmux conf file
   copy:
@@ -9,3 +9,4 @@
 - name: Install tmux
   apt:
     name: tmux
+  become: true
