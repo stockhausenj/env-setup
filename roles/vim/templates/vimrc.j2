@@ -15,6 +15,6 @@ autocmd BufWrite *.c :call DeleteTrailingWS()
 
 call plug#begin('~/.vim/plugged')
 {% for plugin in vim_plugins %}
-Plug '{{plugin}}'
+Plug '{{plugin["plug"]}}', { 'branch': '{{plugin["branch"]}}' }
 {% endfor %}
 call plug#end()

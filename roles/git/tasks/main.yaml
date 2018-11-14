@@ -30,3 +30,4 @@
 - name: Install silversearcher-ag
   apt:
     name: silversearcher-ag
+  become: true

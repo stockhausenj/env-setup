@@ -20,8 +20,18 @@
     - include_role:
         name: tmux
       vars:
-        tmux_user: 'jay'
+        tmux_user: ubuntu
     - include_role:
         name: vim
       vars:
-        vim_plugins: ['scrooloose/nerdtree', 'mattn/emmet-vim', 'pangloss/vim-javascript', 'fatih/vim-go']
+        vim_plugins:
+            - plug: 'scrooloose/nerdtree'
+              branch: master
+            - plug: 'mattn/emmet-vim'
+              branch: master
+            - plug: 'pangloss/vim-javascript'
+              branch: master
+            - plug: 'fatih/vim-go'
+              branch: master
+            - plug: 'python-mode/python-mode'
+              branch: develop
