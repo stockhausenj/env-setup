@@ -19,6 +19,8 @@
         git_user_name: 'Jay Stockhausen'
     - include_role:
         name: tmux
+      vars:
+        tmux_user: 'jay'
     - include_role:
         name: vim
       vars:
