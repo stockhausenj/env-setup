@@ -10,3 +10,10 @@
     line: "{{ item.line }}"
   with_items:
     - { regexp: 'PATH=', line: 'PATH="$HOME/bin:$HOME/.local/bin:$PATH"' }
+- name: Enable vi Option
+  lineinfile:
+    dest: $HOME/.bash_profile
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'set -o', line: 'set -o vi' }
