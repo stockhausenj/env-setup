@@ -2,14 +2,10 @@ colorscheme desert
 set tabstop=4 shiftwidth=4 expandtab
 set hlsearch
 
-autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.rb :call DeleteTrailingWS()
-autocmd BufWrite *.yaml :call DeleteTrailingWS()
-autocmd Filetype yaml setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-autocmd BufWrite *.yml :call DeleteTrailingWS()
-autocmd Filetype yml setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+autocmd Filetype yaml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
+autocmd Filetype yml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
 autocmd BufWrite *.c :call DeleteTrailingWS()
-autocmd BufWrite *.tf :call DeleteTrailingWS()
 autocmd Filetype tf setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2
 
 call plug#begin('~/.vim/plugged')
