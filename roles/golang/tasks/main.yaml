@@ -1,38 +1,33 @@
 - name: Install Go
-  unarchive:
-    src: https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz
-    dest: /usr/local
-    remote_src: yes
+  snap:
+    name: go
+    classic: yes
   become: yes
-- name: Update PATH Environment Variable
-  lineinfile:
-    path: $HOME/.bash_profile
-    regexp: '^PATH='
-    line: 'PATH=$PATH:$HOME/.local/bin:$HOME/bin:/usr/local/go/bin'
 - name: Create golang Dev Directory
   file:
-    path: $HOME/golang
+    path: $HOME/go
     state: directory
-- name: Create golang/bin Directory
+- name: Create go/bin Directory
   file: 
-    path: $HOME/golang/bin
+    path: $HOME/go/bin
     state: directory
-- name: Create golang/src Directory
+- name: Create go/src Directory
   file: 
-    path: $HOME/golang/src
+    path: $HOME/go/src
     state: directory
-- name: Create golang/pkg Directory
+- name: Create go/pkg Directory
   file: 
-    path: $HOME/golang/pkg
-    state: directory
-- name: Create golang/bin Directory
-  file: 
-    path: $HOME/golang/bin
+    path: $HOME/go/pkg
     state: directory
 - name: Add GOBIN Environment Variable
   lineinfile:
     path: $HOME/.bash_profile
     regexp: '^export GOBIN'
-    line: 'export GOBIN="$HOME/golang/bin"'
+    line: 'export GOBIN="$HOME/go/bin"'
+- name: Add GOBIN Environment Variable
+  lineinfile:
+    path: $HOME/.bash_profile
+    regexp: '^export GOPATH'
+    line: 'export GOPATH="$HOME/go"'
 - name: Load bash_profile
   shell: . $HOME/.bash_profile
