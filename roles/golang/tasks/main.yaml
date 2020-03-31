@@ -3,6 +3,10 @@
     name: go
     classic: yes
   become: yes
+- name: Install Go-Dep
+  apt:
+    name: go-dep
+  become: yes
 - name: Create golang Dev Directory
   file:
     path: $HOME/go
