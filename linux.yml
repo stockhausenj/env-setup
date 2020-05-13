@@ -11,8 +11,6 @@
 - hosts: all
   tasks: 
     - include_role:
-        name: bash
-    - include_role:
         name: kubectl
       vars:
         version: '1.16.0'
@@ -23,8 +21,6 @@
         git_user_name: 'Jay Stockhausen'
     - include_role:
         name: tmux
-      vars:
-        tmux_user: ubuntu
     - include_role:
         name: vim
       vars:
@@ -39,3 +35,5 @@
               branch: master
             - plug: 'python-mode/python-mode'
               branch: develop
+    - include_role:
+        name: bash

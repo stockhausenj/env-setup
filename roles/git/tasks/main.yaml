@@ -7,26 +7,6 @@
   template:
     src: gitconfig.j2
     dest: $HOME/.gitconfig
-- name: Add Git Formatting To bashrc
-  lineinfile:
-    dest: $HOME/.bashrc
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  with_items:
-  - { regexp: '^source ~/git-prompt.sh', line: 'source ~/.git-prompt.sh' }
-  - { regexp: '^export GIT_PS1_SHOWDIRTYSTATE', line: 'export GIT_PS1_SHOWDIRTYSTATE=1' }
-  - { regexp: '^export GIT_PS1_SHOWUNTRACKEDFILES', line: 'export GIT_PS1_SHOWUNTRACKEDFILES=1' }
-  - { regexp: '^export GIT_PS1_SHOWUPSTREAM', line: 'export GIT_PS1_SHOWUPSTREAM="auto"' }
-  - { regexp: '^RED=', line: 'RED="\[\033[0;31m\]"' }
-  - { regexp: '^YELLOW=', line: 'YELLOW="\[\033[0;33m\]"' }
-  - { regexp: '^GREEN=', line: 'GREEN="\[\033[0;32m\]"' }
-  - { regexp: '^BLUE=', line: 'BLUE="\[\033[0;34m\]"' }
-  - { regexp: '^PURPLE=', line: 'PURPLE="\[\033[0;35m\]"' }
-  - { regexp: '^NO_COLOR=', line: 'NO_COLOR="\[\033[0m\]"' }
-  - { regexp: '^PS1=', line: 'PS1="[$RED\u$NO_COLOR@$PURPLE\h:$NO_COLOR\w $YELLOW\$(__git_ps1)$NO_COLOR $GREEN BASH$NO_COLOR]\n$ "' }
-  - { regexp: '^export PS1', line: 'export PS1' }
-- name: Load bashrc
-  shell: . $HOME/.bashrc
 - name: Install silversearcher-ag
   apt:
     name: silversearcher-ag

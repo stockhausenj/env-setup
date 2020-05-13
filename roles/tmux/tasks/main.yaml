@@ -1,11 +1,11 @@
 - name: Install tmux plugin manager (TPM)
   git:
     repo: https://github.com/tmux-plugins/tpm.git
-    dest: /home/{{ tmux_user }}/.tmux/plugins/tpm
+    dest: $HOME/.tmux/plugins/tpm
 - name: Copy tmux conf file
   copy:
     src: tmux.conf
-    dest: /home/{{ tmux_user }}/.tmux.conf
+    dest: $HOME/.tmux.conf
 - name: Install tmux
   apt:
     name: tmux

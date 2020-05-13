@@ -1,4 +1,8 @@
 ---
+- name: Copy bashrc
+  copy:
+    src: bashrc
+    dest: $HOME/.bashrc
 - name: Update bash_profile
   template:
     src: bash_profile.j2

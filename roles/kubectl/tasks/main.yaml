@@ -5,12 +5,30 @@
     dest: /usr/local/bin/kubectl
     mode: 755
   become: true
-- name: Add kubectl Alias and Bash Completion to .bashrc
-  lineinfile:
-    dest: $HOME/.bashrc
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  with_items:
-  - { regexp: '^source <(kubectl completion bash)', line: 'source <(kubectl completion bash)' }
-  - { regexp: '^alias k=kubectl', line: 'alias k=kubectl' }
-  - { regexp: '^complete -F __start_kubectl k', line: 'complete -F __start_kubectl k' }
+- name: Create kube dir
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: '0755'
+- name: Copy kube-ps1 script to kube dir
+  copy:
+    src: kube-ps1.sh
+    dest: /usr/bin/kube-ps1.sh
+    mode: '0755'
+  become: true
+- name: Copy kubectx script to path
+  copy:
+    src: kubectx
+    dest: /usr/bin/kubectx
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+- name: Copy kubens script to path
+  copy:
+    src: kubens
+    dest: /usr/bin/kubens
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
