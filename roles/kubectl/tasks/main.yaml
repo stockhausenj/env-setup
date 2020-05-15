@@ -32,3 +32,18 @@
     group: root
     mode: '0755'
   become: true
+- name: Download k9s
+  unarchive:
+    src: https://github.com/derailed/k9s/releases/download/v0.19.4/k9s_Linux_x86_64.tar.gz
+    dest: /tmp/k9s
+    remote_src: yes
+- name: Install k9s
+  shell: mv /tmp/k9s/k9s /usr/bin/k9s && rm -rf /tmp/k9s
+  become: true
+- name: Modify k9s binary
+  file:
+    path: /usr/bin/k9s
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
