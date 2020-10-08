@@ -32,6 +32,15 @@
     group: root
     mode: '0755'
   become: true
+- name: Copy kubetail script to path
+  copy:
+    src: kubetail
+    dest: /usr/bin/kubetail
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
 - name: Download k9s
   unarchive:
     src: https://github.com/derailed/k9s/releases/download/v0.19.4/k9s_Linux_x86_64.tar.gz
