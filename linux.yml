@@ -13,7 +13,7 @@
     - include_role:
         name: kubectl
       vars:
-        version: '1.16.0'
+        version: '1.21.0'
     - include_role:
         name: git
       vars:
