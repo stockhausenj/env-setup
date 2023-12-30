@@ -11,3 +11,7 @@
   apt:
     name: silversearcher-ag
   become: true
+- name: Install ugrep
+  apt:
+    name: ugrep
+  become: true
