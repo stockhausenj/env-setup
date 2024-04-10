@@ -115,6 +115,8 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# kube stuff
 source <(kubectl completion bash)
 alias k=kubectl
 alias kcc='kubectl config current-context'
@@ -126,11 +128,13 @@ alias kl='kubectl logs '
 alias kpf='kubectl port-forward'
 alias ksc='kubectl config use-context'
 complete -F __start_kubectl k
+source /usr/bin/kube-ps1.sh
+export KUBECTL_EXTERNAL_DIFF=kubectl-neat-diff
+
 source ~/.git-prompt.sh
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
 export GIT_PS1_SHOWUPSTREAM="auto"
-source /usr/bin/kube-ps1.sh
 RED="\[\033[0;31m\]"
 YELLOW="\[\033[0;33m\]"
 GREEN="\[\033[0;32m\]"

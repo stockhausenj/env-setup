@@ -1,10 +1,4 @@
 ---
-- name: Install kubectl
-  get_url:
-    url: https://storage.googleapis.com/kubernetes-release/release/v{{ version }}/bin/linux/amd64/kubectl
-    dest: /usr/local/bin/kubectl
-    mode: 755
-  become: true
 - name: Create kube dir
   file:
     path: $HOME/.kube
@@ -40,10 +34,15 @@
     group: root
     mode: '0755'
   become: true
-
+- name: Install kubectl
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ version }}/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: 755
+  become: true
 - name: Download k9s
   unarchive:
-    src: https://github.com/derailed/k9s/releases/download/v0.19.4/k9s_Linux_x86_64.tar.gz
+    src: https://github.com/derailed/k9s/releases/download/v0.32.4/k9s_Linux_x86_64.tar.gz
     dest: /tmp/k9s
     remote_src: yes
 - name: Install k9s
@@ -56,3 +55,10 @@
     group: root
     mode: '0755'
   become: true
+- name: Download neat-diff
+  get_url:
+    url: https://github.com/sh0rez/kubectl-neat-diff/releases/download/v0.2.0/kubectl-neat-diff-linux-amd64
+    dest: /usr/local/bin/kubectl-neat-diff
+    mode: 755
+  become: true
+
