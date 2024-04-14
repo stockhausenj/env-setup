@@ -1,0 +1,30 @@
+# ansible-playbook -i "localhost," -c local ubuntu.yml -K
+#
+# Tested on Ubuntu 22.04
+---
+- hosts: all
+  tasks: 
+    - include_role:
+        name: bash
+    - include_role:
+        name: vim
+      vars:
+        vim_plugins:
+            - plug: 'scrooloose/nerdtree'
+              branch: master
+    - include_role:
+        name: tmux
+    - include_role:
+        name: git
+      vars:
+        git_user_email: 'jay.stockhausen@gmail.com'
+        git_user_name: 'Jay Stockhausen'
+    - include_role:
+        name: kubectl
+      vars:
+        version: '1.28.0'
+    - include_role:
+        name: nodejs
+      vars:
+        nvm_version: '0.39.7'
+        node_version: 20

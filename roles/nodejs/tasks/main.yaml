@@ -1,9 +1,10 @@
 ---
-- name: Install nodejs and npm
-  when: ansible_distribution == "CentOS"
-  shell: curl --silent --location https://rpm.nodesource.com/setup_6.x | sudo bash - && yum -y install nodejs
-  become: yes
-- name: Install nodejs and npm
-  when: ansible_distribution == "Ubuntu"
-  shell: curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - && apt install -y nodejs
-  become: yes
+- name: Get NVM Installer
+  get_url:
+    url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh
+    dest: /tmp/nvm-install.sh
+    mode: 0755
+- name: Install NVM
+  command: /tmp/nvm-install.sh
+- name: Install Node.js
+  shell: . /home/ubuntu/.nvm/nvm.sh && nvm install {{ node_version }}
