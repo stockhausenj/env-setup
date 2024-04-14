@@ -42,11 +42,11 @@
   become: true
 - name: Download k9s
   unarchive:
-    src: https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_x86_64.tar.gz
-    dest: /tmp/k9s
+    src: https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_amd64.tar.gz
+    dest: /tmp
     remote_src: yes
 - name: Install k9s
-  shell: mv /tmp/k9s/k9s /usr/bin/k9s && rm -rf /tmp/k9s
+  shell: mv /tmp/k9s /usr/bin/k9s && rm -rf /tmp/k9s
   become: true
 - name: Modify k9s binary
   file:
