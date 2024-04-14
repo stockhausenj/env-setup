@@ -22,7 +22,9 @@
     - include_role:
         name: kubectl
       vars:
-        version: '1.28.0'
+        kubectl_version: '1.28.0'
+        k9_version: '0.32.4'
+        ndiff_version: '0.2.0'
     - include_role:
         name: nodejs
       vars:

@@ -1,7 +1,7 @@
 ---
 - name: Download and Deploy git-prompt.sh
   get_url:
-    url: https://raw.githubusercontent.com/stockhausenj/git/master/contrib/completion/git-prompt.sh
+    url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
     dest: $HOME/.git-prompt.sh
 - name: Deploy gitconfig
   template:
