@@ -1,0 +1,10 @@
+# ansible-playbook -i "localhost," -c local ubuntu.yml -K
+#
+# Tested on Ubuntu 22.04
+---
+- hosts: all
+  tasks: 
+    - include_role:
+        name: nodejs
+      vars:
+        node_version: 20

@@ -26,7 +26,6 @@
         k9_version: '0.32.4'
         ndiff_version: '0.2.0'
     - include_role:
-        name: nodejs
+        name: nvm
       vars:
         nvm_version: '0.39.7'
-        node_version: 20

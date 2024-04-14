@@ -1,10 +1,3 @@
 ---
-- name: Get NVM Installer
-  get_url:
-    url: https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh
-    dest: /tmp/nvm-install.sh
-    mode: 0755
-- name: Install NVM
-  command: /tmp/nvm-install.sh
 - name: Install Node.js
   shell: . /home/ubuntu/.nvm/nvm.sh && nvm install {{ node_version }}
