@@ -5,3 +5,7 @@
     dest: /opt/
     remote_src: yes
   become: true
+- name: Copy JDK bash source
+  copy:
+    src: jdk-21-source
+    dest: $HOME/.sources/jdk-21

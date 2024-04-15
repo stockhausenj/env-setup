@@ -7,6 +7,11 @@
   template:
     src: bash_profile.j2
     dest: $HOME/.bash_profile
+- name: Create sources dir
+  ansible.builtin.file:
+    path: $HOME/.sources
+    state: directory
+    mode: '0755'
 - name: Add Ubuntu Path
   lineinfile:
     dest: $HOME/.bash_profile
