@@ -8,4 +8,4 @@
 - name: Copy JDK bash source
   copy:
     src: jdk-21-source
-    dest: $HOME/.sources/jdk-21
+    dest: $HOME/.sources/java
