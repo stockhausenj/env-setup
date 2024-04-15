@@ -1,1 +1,10 @@
 if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
+# Find all files in .sources directory and source them
+if [ -d ~/.sources ]; then
+    # Find all files in .sources directory and source them
+    for file in ~/.sources/*; do
+        if [ -f "$file" ] && [ -r "$file" ]; then
+            source "$file"
+        fi
+    done
+fi
