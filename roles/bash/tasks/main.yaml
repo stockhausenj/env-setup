@@ -38,3 +38,7 @@
   copy:
     src: mcfly-source
     dest: $HOME/.sources/mcfly
+- name: Install HTTPie
+  apt:
+    name: httpie
+  become: true
