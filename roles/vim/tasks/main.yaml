@@ -18,3 +18,16 @@
   template:
     src: vimrc.j2
     dest: $HOME/.vimrc
+- name: Install neovim
+  apt:
+    name: neovim
+  become: true
+- name: Create .nvim Config Directory
+  file: 
+    path: $HOME/.config/nvim
+    state: directory
+- name: Copy init.vim to nvim Config Diretory
+  copy:
+    src: init.vim
+    dest: $HOME/.config/nvim/init.vim
+    mode: '0644'
