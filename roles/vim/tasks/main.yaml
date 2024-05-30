@@ -26,8 +26,8 @@
   file: 
     path: $HOME/.config/nvim
     state: directory
-- name: Copy init.vim to nvim Config Diretory
+- name: Copy init.lua to nvim Config Diretory
   copy:
-    src: init.vim
-    dest: $HOME/.config/nvim/init.vim
+    src: init.lua
+    dest: $HOME/.config/nvim/init.lua
     mode: '0644'
