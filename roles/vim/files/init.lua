@@ -1,3 +1,5 @@
+vim.opt.mouse = ""
+
 vim.opt.runtimepath:prepend("~/.vim")
 vim.opt.runtimepath:append("~/.vim/after")
 
