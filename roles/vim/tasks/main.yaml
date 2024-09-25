@@ -18,16 +18,61 @@
   template:
     src: vimrc.j2
     dest: $HOME/.vimrc
-- name: Install neovim
+- name: Download latest stable Neovim release
+  get_url:
+    url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
+    dest: /tmp/nvim-linux64.tar.gz
+- name: Extract Neovim binary
+  unarchive:
+    src: /tmp/nvim-linux64.tar.gz
+    dest: /opt
+    remote_src: yes
+  become: true
+- name: Ensure correct permissions on Neovim binary
+  file:
+    path: /opt/nvim-linux64/bin/nvim
+    mode: '0755'
+    state: file
+  become: true
+- name: Create symlink for nvim
+  ansible.builtin.file:
+    src: /opt/nvim-linux64/bin/nvim
+    dest: /usr/bin/nvim
+    state: link
+  become: true
+- name: Copy nvim bash source
+  copy:
+    src: nvim-source
+    dest: $HOME/.sources/nvim
+- name: Verify Neovim installation
+  command: "nvim --version"
+  register: neovim_version
+- name: Display Neovim version
+  debug:
+    msg: "Neovim version: {{ neovim_version.stdout }}"
+- name: Install fd-find
   apt:
-    name: neovim
+    name: fd-find
+  become: true
+- name: Install ripgrep
+  apt:
+    name: ripgrep
+  become: true
+- name: Install luarocks
+  apt:
+    name: luarocks
   become: true
 - name: Create .nvim Config Directory
   file: 
     path: $HOME/.config/nvim
     state: directory
-- name: Copy init.lua to nvim Config Diretory
+- name: Clone LazyVim into the Neovim config directory
+  git:
+    repo: https://github.com/LazyVim/starter
+    dest: $HOME/.config/nvim
+    update: yes
+- name: Copy plugins.lua to nvim plugins diretory
   copy:
-    src: init.lua
-    dest: $HOME/.config/nvim/init.lua
+    src: nvim/lua/plugins/plugins.lua
+    dest: $HOME/.config/nvim/lua/plugins/plugins.lua
     mode: '0644'
