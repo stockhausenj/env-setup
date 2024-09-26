@@ -76,3 +76,8 @@
     src: nvim/lua/plugins/plugins.lua
     dest: $HOME/.config/nvim/lua/plugins/plugins.lua
     mode: '0644'
+- name: Copy keymaps.lua to nvim config diretory
+  copy:
+    src: nvim/lua/plugins/plugins.lua
+    dest: $HOME/.config/nvim/lua/config/keymaps.lua
+    mode: '0644'
