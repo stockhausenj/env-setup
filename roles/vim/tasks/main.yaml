@@ -71,10 +71,15 @@
     repo: https://github.com/LazyVim/starter
     dest: $HOME/.config/nvim
     update: yes
-- name: Copy plugins.lua to nvim plugins diretory
+- name: Copy treesitter.lua to nvim plugins diretory
   copy:
-    src: nvim/lua/plugins/plugins.lua
-    dest: $HOME/.config/nvim/lua/plugins/plugins.lua
+    src: nvim/lua/plugins/treesitter.lua
+    dest: $HOME/.config/nvim/lua/plugins/treesitter.lua
+    mode: '0644'
+- name: Copy python.lua to nvim plugins diretory
+  copy:
+    src: nvim/lua/plugins/python.lua
+    dest: $HOME/.config/nvim/lua/plugins/python.lua
     mode: '0644'
 - name: Copy keymaps.lua to nvim config diretory
   copy:
