@@ -2,6 +2,7 @@
 -- https://github.com/pappasam/jedi-language-server
 -- https://github.com/astral-sh/ruff
 -- https://github.com/python-lsp/python-lsp-server
+-- pip install black
 
 return {
   -- Add `pyright` to mason
@@ -132,8 +133,9 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        ["python"] = { { "black", "ruff" } },
+        python = { "black", "ruff" },
       },
+      format_on_save = { timeout_ms = 500 },
     },
   },
 
