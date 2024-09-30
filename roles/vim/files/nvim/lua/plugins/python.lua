@@ -3,6 +3,7 @@
 -- https://github.com/astral-sh/ruff
 -- https://github.com/python-lsp/python-lsp-server
 -- pip install black
+-- pip install isort
 
 return {
   -- Add `pyright` to mason
@@ -133,7 +134,7 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        python = { "black", "ruff" },
+        python = { "black", "ruff", "isort" },
       },
       format_on_save = { timeout_ms = 500 },
     },
