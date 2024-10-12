@@ -81,6 +81,11 @@
     src: nvim/lua/plugins/python.lua
     dest: $HOME/.config/nvim/lua/plugins/python.lua
     mode: '0644'
+- name: Copy golang.lua to nvim plugins diretory
+  copy:
+    src: nvim/lua/plugins/golang.lua
+    dest: $HOME/.config/nvim/lua/plugins/golang.lua
+    mode: '0644'
 - name: Copy keymaps.lua to nvim config diretory
   copy:
     src: nvim/lua/plugins/keymaps.lua
@@ -90,4 +95,9 @@
   copy:
     src: nvim/lua/config/options.lua
     dest: $HOME/.config/nvim/lua/config/options.lua
+    mode: '0644'
+- name: Copy autocmds.lua to nvim config diretory
+  copy:
+    src: nvim/lua/config/autocmds.lua
+    dest: $HOME/.config/nvim/lua/config/autocmds.lua
     mode: '0644'
