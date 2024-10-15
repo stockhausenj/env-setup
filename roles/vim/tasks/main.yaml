@@ -86,6 +86,11 @@
     src: nvim/lua/plugins/golang.lua
     dest: $HOME/.config/nvim/lua/plugins/golang.lua
     mode: '0644'
+- name: Copy lspconfig.lua to nvim plugins diretory
+  copy:
+    src: nvim/lua/plugins/lspconfig.lua
+    dest: $HOME/.config/nvim/lua/plugins/lspconfig.lua
+    mode: '0644'
 - name: Copy keymaps.lua to nvim config diretory
   copy:
     src: nvim/lua/plugins/keymaps.lua
