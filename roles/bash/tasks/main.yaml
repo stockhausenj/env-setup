@@ -1,44 +1,91 @@
 ---
-- name: Copy bashrc
+# common shell stuff
+- name: create sources dir
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.sources"
+    state: directory
+    mode: "0755"
+
+# bash
+- name: copy bashrc
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   copy:
     src: bashrc
     dest: $HOME/.bashrc
-- name: Update bash_profile
+- name: update bash_profile
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   template:
     src: bash_profile.j2
     dest: $HOME/.bash_profile
-- name: Create sources dir
-  ansible.builtin.file:
-    path: $HOME/.sources
-    state: directory
-    mode: '0755'
-- name: Add Ubuntu Path
+- name: add ubuntu path
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   lineinfile:
     dest: $HOME/.bash_profile
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
-    - { regexp: 'PATH=', line: 'PATH="$HOME/bin:$HOME/.local/bin:$PATH"' }
-- name: Enable vi Option
+    - { regexp: "PATH=", line: 'PATH="$HOME/bin:$HOME/.local/bin:$PATH"' }
+- name: enable vi option
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   lineinfile:
     dest: $HOME/.bash_profile
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
-    - { regexp: 'set -o', line: 'set -o vi' }
-- name: Download mcfly
+    - { regexp: "set -o", line: "set -o vi" }
+
+# zsh
+- name: copy zprofile
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: zprofile
+    dest: $HOME/.zprofile
+- name: copy zshrc
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: zshrc
+    dest: $HOME/.zshrc
+
+# mcfly
+- name: install mcfly
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: mcfly
+    state: latest
+- name: download mcfly
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
     dest: /tmp/mcfly-install.sh
     mode: 0755
-- name: Install mcfly
+- name: install mcfly
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   command: /tmp/mcfly-install.sh --git cantino/mcfly --force
   become: true
-- name: Copy mcfly source
+- name: copy mcfly source
   copy:
     src: mcfly-source
     dest: $HOME/.sources/mcfly
-- name: Install HTTPie
+
+# httpie
+- name: install HTTPie
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: httpie
+    state: latest
+- name: install HTTPie
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: httpie
   become: true
