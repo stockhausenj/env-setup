@@ -72,8 +72,16 @@
   command: /tmp/mcfly-install.sh --git cantino/mcfly --force
   become: true
 - name: copy mcfly source
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   copy:
-    src: mcfly-source
+    src: mcfly-source-bash
+    dest: $HOME/.sources/mcfly
+- name: copy mcfly source
+  when:
+    - ansible_facts['distribution'] == 'Darwin'
+  copy:
+    src: mcfly-source-zsh
     dest: $HOME/.sources/mcfly
 
 # httpie

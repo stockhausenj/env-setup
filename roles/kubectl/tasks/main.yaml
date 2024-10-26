@@ -1,64 +1,106 @@
 ---
+# kubectl (required)
 - name: Create kube dir
   file:
     path: $HOME/.kube
     state: directory
-    mode: '0755'
-- name: Copy kube-ps1 script to kube dir
-  copy:
-    src: kube-ps1.sh
-    dest: /usr/bin/kube-ps1.sh
-    mode: '0755'
-  become: true
-- name: Copy kubectx script to path
-  copy:
-    src: kubectx
-    dest: /usr/bin/kubectx
-    owner: root
-    group: root
-    mode: '0755'
-  become: true
-- name: Copy kubens script to path
-  copy:
-    src: kubens
-    dest: /usr/bin/kubens
-    owner: root
-    group: root
-    mode: '0755'
-  become: true
-- name: Copy kubetail script to path
-  copy:
-    src: kubetail
-    dest: /usr/bin/kubetail
-    owner: root
-    group: root
-    mode: '0755'
-  become: true
+    mode: "0755"
 - name: Install kubectl
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/linux/amd64/kubectl
     dest: /usr/local/bin/kubectl
     mode: 0755
   become: true
+- name: Install kubectl
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  get_url:
+    url: https://dl.k8s.io/release/v{{ kubectl_version }}/bin/darwin/arm64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: 0755
+  become: true
+- name: Copy kube-ps1 script to kube dir
+  copy:
+    src: kube-ps1.sh
+    dest: /usr/local/bin/kube-ps1.sh
+    mode: "0755"
+  become: true
+
+# kube zsh stuff
+- name: copy kube source
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: kube-source-zsh
+    dest: $HOME/.sources/kube
+
+# kubectx
+- name: Copy kubectx script to path
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  copy:
+    src: kubectx
+    dest: /usr/bin/kubectx
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+# kubens
+- name: Copy kubens script to path
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  copy:
+    src: kubens
+    dest: /usr/bin/kubens
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+# kubetail
+- name: Copy kubetail script to path
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  copy:
+    src: kubetail
+    dest: /usr/bin/kubetail
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+# k9s
 - name: Download k9s
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   unarchive:
     src: https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_amd64.tar.gz
     dest: /tmp
     remote_src: yes
 - name: Install k9s
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   shell: mv /tmp/k9s /usr/bin/k9s && rm -rf /tmp/k9s
   become: true
 - name: Modify k9s binary
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   file:
     path: /usr/bin/k9s
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   become: true
+
+# neat-diff
 - name: Download neat-diff
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://github.com/sh0rez/kubectl-neat-diff/releases/download/v{{ ndiff_version }}/kubectl-neat-diff-linux-amd64
     dest: /usr/local/bin/kubectl-neat-diff
     mode: 0755
   become: true
-

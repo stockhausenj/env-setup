@@ -4,3 +4,7 @@
   tasks:
     - include_role:
         name: bash
+    - include_role:
+        name: kubectl
+      vars:
+        kubectl_version: "1.30.5"
