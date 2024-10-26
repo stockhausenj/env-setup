@@ -39,7 +39,7 @@
 # kubectx
 - name: Copy kubectx script to path
   when:
-    - ansible_facts['distribution'] == 'Ubuntu'
+    - ansible_facts['os_family'] == 'Ubuntu'
   copy:
     src: kubectx
     dest: /usr/local/bin/kubectx
@@ -47,16 +47,36 @@
     group: root
     mode: "0755"
   become: true
+- name: Copy kubectx script to path
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: kubectx
+    dest: /usr/local/bin/kubectx
+    owner: root
+    group: wheel
+    mode: "0755"
+  become: true
 
 # kubens
 - name: Copy kubens script to path
   when:
-    - ansible_facts['distribution'] == 'Ubuntu'
+    - ansible_facts['os_family'] == 'Ubuntu'
   copy:
     src: kubens
     dest: /usr/local/bin/kubens
     owner: root
     group: root
+    mode: "0755"
+  become: true
+- name: Copy kubens script to path
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: kubens
+    dest: /usr/local/bin/kubens
+    owner: root
+    group: wheel
     mode: "0755"
   become: true
 
