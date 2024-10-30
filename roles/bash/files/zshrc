@@ -115,7 +115,7 @@ fi
 
 alias vim='nvim'
 
-export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 # PROMPT custom
 export PROMPT=$PROMPT'$(kube_ps1) '
