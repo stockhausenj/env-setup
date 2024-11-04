@@ -89,6 +89,8 @@
       - ripgrep
       - node
       - sqlfluff
+      - go
+      - gopls
     state: latest
 - name: create .nvim config directory
   when:
