@@ -79,11 +79,16 @@
   become: true
 
 # nvim - Darwin
-- name: install Neovim
+- name: brew install Neovim stuff
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
-    name: neovim
+    name:
+      - neovim
+      - luarocks
+      - ripgrep
+      - node
+      - sqlfluff
     state: latest
 - name: create .nvim config directory
   when:
