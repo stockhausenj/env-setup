@@ -7,8 +7,8 @@ return {
         gopls = {
           on_attach = function(client, bufnr)
             if vim.bo[bufnr].filetype == "go" then
-              client.server_capabilities.documentFormattingProvider = false
-              client.server_capabilities.documentRangeFormattingProvider = false
+              client.server_capabilities.documentFormattingProvider = true
+              client.server_capabilities.documentRangeFormattingProvider = true
             end
           end,
           settings = {

@@ -1,108 +1,155 @@
 ---
+# vim - ubuntu
 - name: Create .vim Directory
-  file: 
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  file:
     path: $HOME/.vim
     state: directory
 - name: Create .vim Directories
-  file: 
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  file:
     path: $HOME/.vim/{{ item }}
     state: directory
   with_items:
-  - autoload
-  - colors
+    - autoload
+    - colors
 - name: Download vim-plugin
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     dest: $HOME/.vim/autoload/plug.vim
 - name: Update vimrc
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   template:
     src: vimrc.j2
     dest: $HOME/.vimrc
+
+# nvim - ubuntu
 - name: Download latest stable Neovim release
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
     dest: /tmp/nvim-linux64.tar.gz
 - name: Extract Neovim binary
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   unarchive:
     src: /tmp/nvim-linux64.tar.gz
     dest: /opt
     remote_src: yes
   become: true
 - name: Ensure correct permissions on Neovim binary
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   file:
     path: /opt/nvim-linux64/bin/nvim
-    mode: '0755'
+    mode: "0755"
     state: file
   become: true
 - name: Create symlink for nvim
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.file:
     src: /opt/nvim-linux64/bin/nvim
     dest: /usr/bin/nvim
     state: link
   become: true
-- name: Copy nvim bash source
-  copy:
-    src: nvim-source
-    dest: $HOME/.sources/nvim
-- name: Verify Neovim installation
-  command: "nvim --version"
-  register: neovim_version
-- name: Display Neovim version
-  debug:
-    msg: "Neovim version: {{ neovim_version.stdout }}"
 - name: Install fd-find
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: fd-find
   become: true
 - name: Install ripgrep
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: ripgrep
   become: true
 - name: Install luarocks
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: luarocks
   become: true
-- name: Create .nvim Config Directory
-  file: 
+
+# nvim - Darwin
+- name: install Neovim
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: neovim
+    state: latest
+- name: create .nvim config directory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  file:
     path: $HOME/.config/nvim
     state: directory
-- name: Clone LazyVim into the Neovim config directory
+- name: check if nvim dir exists
+  stat:
+    path: $HOME/.config/nvim
+  register: nvim_dir_exists
+- name: clone LazyVim into the Neovim config directory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not nvim_dir_exists.stat.exists
   git:
     repo: https://github.com/LazyVim/starter
     dest: $HOME/.config/nvim
     update: yes
+    force: true
 - name: Copy treesitter.lua to nvim plugins diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/treesitter.lua
     dest: $HOME/.config/nvim/lua/plugins/treesitter.lua
-    mode: '0644'
+    mode: "0644"
 - name: Copy python.lua to nvim plugins diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/python.lua
     dest: $HOME/.config/nvim/lua/plugins/python.lua
-    mode: '0644'
-- name: Copy golang.lua to nvim plugins diretory
+    mode: "0644"
+- name: Copy javascript.lua to nvim plugins diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
-    src: nvim/lua/plugins/golang.lua
-    dest: $HOME/.config/nvim/lua/plugins/golang.lua
-    mode: '0644'
+    src: nvim/lua/plugins/javascript.lua
+    dest: $HOME/.config/nvim/lua/plugins/javascript.lua
+    mode: "0644"
 - name: Copy lspconfig.lua to nvim plugins diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/lspconfig.lua
     dest: $HOME/.config/nvim/lua/plugins/lspconfig.lua
-    mode: '0644'
+    mode: "0644"
 - name: Copy keymaps.lua to nvim config diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
-    src: nvim/lua/plugins/keymaps.lua
+    src: nvim/lua/config/keymaps.lua
     dest: $HOME/.config/nvim/lua/config/keymaps.lua
-    mode: '0644'
+    mode: "0644"
 - name: Copy options.lua to nvim config diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/config/options.lua
     dest: $HOME/.config/nvim/lua/config/options.lua
-    mode: '0644'
+    mode: "0644"
 - name: Copy autocmds.lua to nvim config diretory
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/config/autocmds.lua
     dest: $HOME/.config/nvim/lua/config/autocmds.lua
-    mode: '0644'
+    mode: "0644"
