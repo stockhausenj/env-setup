@@ -1,0 +1,13 @@
+---
+- name: install FluxCD CLI
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: fluxcd/tap/flux
+    state: latest
+- name: copy FluxCD CLI source
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  copy:
+    src: fluxcd-source-zsh
+    dest: $HOME/.sources/fluxcd
