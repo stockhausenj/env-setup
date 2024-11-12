@@ -1,5 +1,7 @@
 ---
 - name: Download and Deploy git-prompt.sh
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
     dest: $HOME/.git-prompt.sh
@@ -8,10 +10,14 @@
     src: gitconfig.j2
     dest: $HOME/.gitconfig
 - name: Install silversearcher-ag
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: silversearcher-ag
   become: true
 - name: Install ugrep
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
   apt:
     name: ugrep
   become: true
