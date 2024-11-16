@@ -111,6 +111,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+bindkey -v
+
 # Find all files in .sources directory and source them
 if [ -d ~/.sources ]; then
     # Find all files in .sources directory and source them
