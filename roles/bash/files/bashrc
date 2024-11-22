@@ -143,3 +143,5 @@ PURPLE="\[\033[0;35m\]"
 NO_COLOR="\[\033[0m\]"
 PS1="[$RED\u$NO_COLOR@$PURPLE\h:$NO_COLOR\w $YELLOW\$(__git_ps1)$NO_COLOR \$(kube_ps1) $GREEN BASH$NO_COLOR]\n$ "
 export PS1
+
+alias vim='nvim'

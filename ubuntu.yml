@@ -8,10 +8,6 @@
         name: bash
     - include_role:
         name: vim
-      vars:
-        vim_plugins:
-            - plug: 'scrooloose/nerdtree'
-              branch: master
     - include_role:
         name: tmux
     - include_role:
@@ -29,5 +25,3 @@
         name: nvm
       vars:
         nvm_version: '0.39.7'
-    - include_role:
-        name: java

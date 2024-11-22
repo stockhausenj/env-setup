@@ -15,18 +15,6 @@
   with_items:
     - autoload
     - colors
-- name: Download vim-plugin
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  get_url:
-    url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    dest: $HOME/.vim/autoload/plug.vim
-- name: Update vimrc
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  template:
-    src: vimrc.j2
-    dest: $HOME/.vimrc
 
 # nvim - ubuntu
 - name: Download latest stable Neovim release

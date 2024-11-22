@@ -5,6 +5,4 @@
 - hosts: all
   tasks: 
     - include_role:
-        name: nodejs
-      vars:
-        node_version: 20
+        name: golang
