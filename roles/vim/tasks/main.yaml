@@ -99,51 +99,39 @@
     dest: $HOME/.config/nvim
     update: yes
     force: true
+
+# nvim all
 - name: Copy treesitter.lua to nvim plugins diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/treesitter.lua
     dest: $HOME/.config/nvim/lua/plugins/treesitter.lua
     mode: "0644"
 - name: Copy python.lua to nvim plugins diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/python.lua
     dest: $HOME/.config/nvim/lua/plugins/python.lua
     mode: "0644"
 - name: Copy javascript.lua to nvim plugins diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/javascript.lua
     dest: $HOME/.config/nvim/lua/plugins/javascript.lua
     mode: "0644"
 - name: Copy lspconfig.lua to nvim plugins diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/plugins/lspconfig.lua
     dest: $HOME/.config/nvim/lua/plugins/lspconfig.lua
     mode: "0644"
 - name: Copy keymaps.lua to nvim config diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/config/keymaps.lua
     dest: $HOME/.config/nvim/lua/config/keymaps.lua
     mode: "0644"
 - name: Copy options.lua to nvim config diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/config/options.lua
     dest: $HOME/.config/nvim/lua/config/options.lua
     mode: "0644"
 - name: Copy autocmds.lua to nvim config diretory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
   copy:
     src: nvim/lua/config/autocmds.lua
     dest: $HOME/.config/nvim/lua/config/autocmds.lua
