@@ -1,7 +1,5 @@
 ---
 - name: Download and Deploy git-prompt.sh
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
   get_url:
     url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
     dest: $HOME/.git-prompt.sh
@@ -9,6 +7,8 @@
   template:
     src: gitconfig.j2
     dest: $HOME/.gitconfig
+
+# ubuntu extras
 - name: Install silversearcher-ag
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
@@ -21,3 +21,11 @@
   apt:
     name: ugrep
   become: true
+
+# macos extras
+- name: install lazygit
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: lazygit
+    state: latest
