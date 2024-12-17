@@ -79,6 +79,7 @@
       - sqlfluff
       - go
       - gopls
+      - fzf
     state: latest
 - name: create .nvim config directory
   when:
