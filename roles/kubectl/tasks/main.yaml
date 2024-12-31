@@ -81,7 +81,7 @@
   become: true
 
 # kubetail
-- name: Copy kubetail script to path
+- name: Install kubetail
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   copy:
@@ -91,6 +91,12 @@
     group: root
     mode: "0755"
   become: true
+- name: Install kubetail
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: johanhaleby/kubetail/kubetail
+    state: latest
 
 # k9s
 - name: Download k9s
