@@ -47,7 +47,7 @@
 # kubectx
 - name: Copy kubectx script to path
   when:
-    - ansible_facts['os_family'] == 'Ubuntu'
+    - ansible_facts['distribution'] == 'Ubuntu'
   copy:
     src: kubectx
     dest: /usr/local/bin/kubectx
@@ -69,7 +69,7 @@
 # kubens
 - name: Copy kubens script to path
   when:
-    - ansible_facts['os_family'] == 'Ubuntu'
+    - ansible_facts['distribution'] == 'Ubuntu'
   copy:
     src: kubens
     dest: /usr/local/bin/kubens
