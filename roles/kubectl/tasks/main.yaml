@@ -28,6 +28,14 @@
     mode: "0755"
   become: true
 
+# kube bash stuff
+- name: copy kube source
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  copy:
+    src: kube-source-bash
+    dest: $HOME/.sources/kube
+
 # kube zsh stuff
 - name: copy kube source
   when:

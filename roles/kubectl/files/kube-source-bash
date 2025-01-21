@@ -1,0 +1,3 @@
+#!/bin/bash
+
+source /usr/local/bin/kube-ps1.sh
