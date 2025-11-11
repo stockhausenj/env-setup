@@ -12,7 +12,7 @@ return {
     "nvim-neotest/nvim-nio",
   },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       -- vim.list_extend(opts.ensure_installed, { "pyright", "black", "ruff-lsp", "ruff" })
       vim.list_extend(opts.ensure_installed, {
@@ -33,8 +33,9 @@ return {
         { "<leader>dPc", function() require('dap-python').test_class() end,  desc = "Debug Class" },
       },
       config = function()
-        local path = require("mason-registry").get_package("debugpy"):get_install_path()
-        require("dap-python").setup(path .. "/venv/bin/python")
+        --local debugpy = require("mason-registry").get_package("debugpy")
+        --local path = debugpy.install_path
+        require("dap-python").setup("~/.local/share/nvim/mason/packages/debugpy" .. "/venv/bin/python")
       end,
     },
   },
