@@ -33,6 +33,12 @@ return {
 
           local lombok_jar = jdtls_install .. "/lombok.jar"
 
+          -- Check if lombok.jar exists
+          local lombok_exists = vim.fn.filereadable(lombok_jar) == 1
+          if not lombok_exists then
+            vim.notify("lombok.jar not found at " .. lombok_jar .. ". Lombok support will be disabled.", vim.log.levels.WARN)
+          end
+
           -- Find the jdtls launcher jar
           local launcher_jar = vim.fn.glob(jdtls_install .. "/plugins/org.eclipse.equinox.launcher_*.jar")
           if launcher_jar == "" then
@@ -65,23 +71,34 @@ return {
             vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_install .. "/extension/server/*.jar"), "\n"))
           end
 
+      -- Build the command with conditional lombok support
+      local cmd = {
+        "java",
+        "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+        "-Dosgi.bundles.defaultStartLevel=4",
+        "-Declipse.product=org.eclipse.jdt.ls.core.product",
+        "-Dlog.protocol=true",
+        "-Dlog.level=WARNING",
+      }
+
+      -- Add lombok javaagent if available
+      if lombok_exists then
+        table.insert(cmd, "-javaagent:" .. lombok_jar)
+      end
+
+      -- Continue building the command
+      vim.list_extend(cmd, {
+        "-Xms1g",
+        "--add-modules=ALL-SYSTEM",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "-jar", launcher_jar,
+        "-configuration", config_dir,
+        "-data", workspace_dir,
+      })
+
       local config = {
-        cmd = {
-          "java",
-          "-Declipse.application=org.eclipse.jdt.ls.core.id1",
-          "-Dosgi.bundles.defaultStartLevel=4",
-          "-Declipse.product=org.eclipse.jdt.ls.core.product",
-          "-Dlog.protocol=true",
-          "-Dlog.level=WARNING",
-          "-javaagent:" .. lombok_jar,
-          "-Xms1g",
-          "--add-modules=ALL-SYSTEM",
-          "--add-opens", "java.base/java.util=ALL-UNNAMED",
-          "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-          "-jar", launcher_jar,
-          "-configuration", config_dir,
-          "-data", workspace_dir,
-        },
+        cmd = cmd,
 
         root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }),
 

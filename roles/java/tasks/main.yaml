@@ -22,6 +22,44 @@
       become: true
       when: jdk_download_url.stdout != ""
 
+- name: Install Maven via Homebrew (macOS)
+  community.general.homebrew:
+    name: maven
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Download and install Maven (Linux)
+  when: ansible_os_family != "Darwin"
+  block:
+    - name: Get latest Maven version
+      shell: |
+        curl -s https://maven.apache.org/download.cgi | grep -oP 'apache-maven-\d+\.\d+\.\d+-bin.tar.gz' | head -n1
+      register: maven_filename
+      changed_when: false
+
+    - name: Download Maven
+      get_url:
+        url: "https://dlcdn.apache.org/maven/maven-3/{{ maven_filename.stdout }}"
+        dest: "/tmp/{{ maven_filename.stdout }}"
+        mode: '0644'
+      when: maven_filename.stdout != ""
+
+    - name: Extract Maven
+      unarchive:
+        src: "/tmp/{{ maven_filename.stdout }}"
+        dest: /opt/
+        remote_src: yes
+      become: true
+      when: maven_filename.stdout != ""
+
+    - name: Create Maven symlink
+      file:
+        src: "/opt/{{ maven_filename.stdout | regex_replace('-bin\\.tar\\.gz$', '') }}"
+        dest: /opt/maven
+        state: link
+      become: true
+      when: maven_filename.stdout != ""
+
 - name: Ensure .sources directory exists
   file:
     path: "{{ ansible_facts['env']['HOME'] }}/.sources"
@@ -41,6 +79,68 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.sources/java"
     mode: '0644'
   when: ansible_os_family != "Darwin"
+
+# Maven Configuration
+- name: Ensure .m2 directory exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.m2"
+    state: directory
+    mode: '0755'
+
+- name: Create Maven settings.xml
+  copy:
+    dest: "{{ ansible_facts['env']['HOME'] }}/.m2/settings.xml"
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                    https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+        <!-- Local repository location -->
+        <localRepository>${user.home}/.m2/repository</localRepository>
+
+        <!-- Offline mode -->
+        <offline>false</offline>
+
+        <!-- Plugin groups -->
+        <pluginGroups>
+          <pluginGroup>org.apache.maven.plugins</pluginGroup>
+          <pluginGroup>org.codehaus.mojo</pluginGroup>
+        </pluginGroups>
+
+        <!-- Mirrors (uncomment and configure as needed) -->
+        <!--
+        <mirrors>
+          <mirror>
+            <id>central-mirror</id>
+            <name>Maven Central Mirror</name>
+            <url>https://repo1.maven.org/maven2</url>
+            <mirrorOf>central</mirrorOf>
+          </mirror>
+        </mirrors>
+        -->
+
+        <!-- Profiles -->
+        <profiles>
+          <profile>
+            <id>default</id>
+            <properties>
+              <maven.compiler.source>21</maven.compiler.source>
+              <maven.compiler.target>21</maven.compiler.target>
+              <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            </properties>
+          </profile>
+        </profiles>
+
+        <!-- Active profiles -->
+        <activeProfiles>
+          <activeProfile>default</activeProfile>
+        </activeProfiles>
+
+      </settings>
+    mode: '0644'
+    force: no
 
 # VSCode Configuration
 - name: Ensure VSCode settings directory exists (macOS)
@@ -80,6 +180,20 @@
     src: java-lsp.lua
     dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/java-lsp.lua"
     mode: '0644'
+
+- name: Ensure Mason packages directory exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/share/nvim/mason/packages/jdtls"
+    state: directory
+    mode: '0755'
+
+- name: Download Lombok JAR for Neovim LSP
+  get_url:
+    url: "https://projectlombok.org/downloads/lombok.jar"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/share/nvim/mason/packages/jdtls/lombok.jar"
+    mode: '0644'
+    timeout: 30
+  ignore_errors: yes
 
 # IntelliJ Configuration (via JetBrains Toolbox or standalone)
 - name: Create IntelliJ IDEA options directory (macOS)
@@ -138,16 +252,24 @@
 - name: Display post-installation message
   debug:
     msg:
-      - "Java 21 installation complete!"
+      - "Java 21 and Maven installation complete!"
       - ""
       - "Next steps:"
       - "1. Reload your shell: source ~/.zshrc"
       - "2. Verify installation: verify-java-setup"
-      - "3. Check Java version: java -version"
+      - "3. Check versions:"
+      - "   - Java: java -version"
+      - "   - Maven: mvn -version"
       - "4. Install VSCode extensions: cat ~/vscode-java-extensions.json | jq -r '.recommendations[]' | xargs -L 1 code --install-extension"
+      - ""
+      - "Maven:"
+      - "  - Configuration: ~/.m2/settings.xml"
+      - "  - Default compiler: Java 21"
+      - "  - Repository: ~/.m2/repository"
       - ""
       - "For Neovim:"
       - "  - Open a .java file and LSP will auto-attach"
       - "  - Use :Mason to verify jdtls is installed"
+      - "  - Lombok support is enabled (lombok.jar included)"
       - ""
       - "Documentation: {{ ansible_facts['env']['HOME'] }}/env-setup/roles/java/README.md"
