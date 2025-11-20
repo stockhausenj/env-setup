@@ -1,0 +1,12 @@
+# Java 21 Environment Configuration (Linux)
+# OpenJDK 21 installed to /opt
+
+# Find the latest jdk-21* directory
+export JAVA_HOME=$(find /opt -maxdepth 1 -type d -name 'jdk-21*' | sort -V | tail -n 1)
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# Maven settings (if using Maven)
+export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=512m"
+
+# Gradle settings (if using Gradle)
+export GRADLE_OPTS="-Xmx2048m -Dorg.gradle.daemon=true"

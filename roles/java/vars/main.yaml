@@ -1,0 +1,31 @@
+---
+# Java role variables
+
+# IntelliJ IDEA version (adjust based on your installation)
+intellij_version: "2024.1"
+
+# Java version to install
+java_version: "21"
+
+# Maven options
+maven_heap_size: "2048m"
+maven_perm_size: "512m"
+
+# Gradle options
+gradle_heap_size: "2048m"
+gradle_daemon: "true"
+
+# VSCode settings directory (macOS)
+vscode_settings_dir_macos: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User"
+
+# VSCode settings directory (Linux)
+vscode_settings_dir_linux: "{{ ansible_facts['env']['HOME'] }}/.config/Code/User"
+
+# Neovim config directory
+nvim_config_dir: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
+
+# IntelliJ config directory (macOS)
+intellij_config_dir_macos: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/JetBrains"
+
+# IntelliJ config directory (Linux)
+intellij_config_dir_linux: "{{ ansible_facts['env']['HOME'] }}/.config/JetBrains"

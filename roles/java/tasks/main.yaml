@@ -1,11 +1,153 @@
 ---
-- name: Download JDK 21
-  unarchive:
-    src: https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz # https://jdk.java.net/21/
-    dest: /opt/
-    remote_src: yes
-  become: true
-- name: Copy JDK bash source
+- name: Install Java 21 JDK via Homebrew (macOS)
+  community.general.homebrew_cask:
+    name: temurin@21
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Download and install OpenJDK 21 (Linux)
+  when: ansible_os_family != "Darwin"
+  block:
+    - name: Get latest Java 21 download URL
+      shell: |
+        curl -s https://jdk.java.net/21/ | grep -o 'https://download.java.net/java/GA/jdk21[^"]*linux-x64[^"]*tar.gz' | head -n1
+      register: jdk_download_url
+      changed_when: false
+
+    - name: Download and extract JDK 21
+      unarchive:
+        src: "{{ jdk_download_url.stdout }}"
+        dest: /opt/
+        remote_src: yes
+      become: true
+      when: jdk_download_url.stdout != ""
+
+- name: Ensure .sources directory exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.sources"
+    state: directory
+    mode: '0755'
+
+- name: Configure JAVA_HOME for macOS
+  template:
+    src: jdk-21-source-macos.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/java"
+    mode: '0644'
+  when: ansible_os_family == "Darwin"
+
+- name: Configure JAVA_HOME for Linux
+  template:
+    src: jdk-21-source-linux.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/java"
+    mode: '0644'
+  when: ansible_os_family != "Darwin"
+
+# VSCode Configuration
+- name: Ensure VSCode settings directory exists (macOS)
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User"
+    state: directory
+    mode: '0755'
+  when: ansible_os_family == "Darwin"
+
+- name: Configure VSCode Java settings (macOS)
   copy:
-    src: jdk-21-source
-    dest: $HOME/.sources/java
+    dest: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User/java-settings.json"
+    content: |
+      {
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-21",
+            "path": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home",
+            "default": true
+          }
+        ],
+        "java.home": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home",
+        "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+      }
+    mode: '0644'
+  when: ansible_os_family == "Darwin"
+
+# Neovim (LazyVim) Configuration
+- name: Ensure Neovim plugins directory exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins"
+    state: directory
+    mode: '0755'
+
+- name: Configure Neovim Java LSP
+  copy:
+    src: java-lsp.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/java-lsp.lua"
+    mode: '0644'
+
+# IntelliJ Configuration (via JetBrains Toolbox or standalone)
+- name: Create IntelliJ IDEA options directory (macOS)
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/JetBrains/IntelliJIdea{{ intellij_version | default('2024.1') }}/options"
+    state: directory
+    mode: '0755'
+  when: ansible_os_family == "Darwin"
+  ignore_errors: yes
+
+- name: Configure IntelliJ IDEA JDK (macOS)
+  copy:
+    dest: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/JetBrains/IntelliJIdea{{ intellij_version | default('2024.1') }}/options/jdk.table.xml"
+    content: |
+      <application>
+        <component name="ProjectJdkTable">
+          <jdk version="2">
+            <name value="temurin-21" />
+            <type value="JavaSDK" />
+            <version value="java version &quot;21&quot;" />
+            <homePath value="/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home" />
+          </jdk>
+        </component>
+      </application>
+    mode: '0644'
+  when: ansible_os_family == "Darwin"
+  ignore_errors: yes
+
+# Verification and Helper Tools
+- name: Ensure ~/bin directory exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/bin"
+    state: directory
+    mode: '0755'
+
+- name: Copy Java verification script
+  copy:
+    src: verify-java-setup.sh
+    dest: "{{ ansible_facts['env']['HOME'] }}/bin/verify-java-setup"
+    mode: '0755'
+
+- name: Ensure ~/bin is in PATH
+  lineinfile:
+    path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
+    line: 'export PATH="$HOME/bin:$PATH"'
+    regexp: '^export PATH="\$HOME/bin:\$PATH"'
+    state: present
+  when: ansible_os_family == "Darwin"
+
+- name: Copy VSCode Java extensions recommendations
+  copy:
+    src: vscode-java-extensions.json
+    dest: "{{ ansible_facts['env']['HOME'] }}/vscode-java-extensions.json"
+    mode: '0644'
+
+- name: Display post-installation message
+  debug:
+    msg:
+      - "Java 21 installation complete!"
+      - ""
+      - "Next steps:"
+      - "1. Reload your shell: source ~/.zshrc"
+      - "2. Verify installation: verify-java-setup"
+      - "3. Check Java version: java -version"
+      - "4. Install VSCode extensions: cat ~/vscode-java-extensions.json | jq -r '.recommendations[]' | xargs -L 1 code --install-extension"
+      - ""
+      - "For Neovim:"
+      - "  - Open a .java file and LSP will auto-attach"
+      - "  - Use :Mason to verify jdtls is installed"
+      - ""
+      - "Documentation: {{ ansible_facts['env']['HOME'] }}/env-setup/roles/java/README.md"

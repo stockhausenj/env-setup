@@ -1,0 +1,283 @@
+# Java Ansible Role - Claude Code Spec
+
+## Role Purpose
+Install and configure Java 21 JDK for macOS development with seamless IDE integration for VSCode, Neovim (LazyVim), and IntelliJ IDEA.
+
+## Primary Goal
+**Install latest Java 21 JDK (not hardcoded version) for macOS with full IDE integration**
+
+## Target Environment
+- **Primary Platform**: macOS (Darwin) via Homebrew
+- **Secondary Platform**: Linux via direct download
+- **Java Version**: Java 21 LTS (latest minor version)
+- **Shell**: zsh (macOS default)
+
+## Core Design Principles
+
+### 1. Idempotency
+- Role can be run multiple times safely
+- No destructive operations
+- Always check before creating/modifying
+
+### 2. Dynamic Configuration
+- **JAVA_HOME must remain dynamic** (survives Java upgrades)
+  - macOS: Use `/usr/libexec/java_home -v 21`
+  - Linux: Auto-detect latest `jdk-21*` directory
+- Never hardcode specific versions (21.0.2, etc.)
+
+### 3. Fail-Safe
+- IDE configurations use `ignore_errors: yes`
+- Don't fail if IDEs aren't installed
+- Graceful degradation
+
+### 4. Consistency
+- Follow `.sources/` directory pattern (used by bash, kubectl, fluxcd roles)
+- Use templates for platform-specific configs
+- Match shell configuration approach from other roles
+
+## Key Files & Their Purpose
+
+### Core Installation
+- `tasks/main.yaml` - Main Ansible tasks (installation, configuration, verification)
+- `vars/main.yaml` - Configurable variables (IntelliJ version, heap sizes, etc.)
+
+### Environment Configuration
+- `templates/jdk-21-source-macos.j2` - macOS environment variables (uses java_home utility)
+- `templates/jdk-21-source-linux.j2` - Linux environment variables (finds jdk-21*)
+
+### IDE Integration
+- `files/java-lsp.lua` - Neovim nvim-jdtls configuration for LazyVim
+- `files/vscode-java-extensions.json` - VSCode extension recommendations
+- `files/example-settings.json` - VSCode settings template
+- IntelliJ config is inline in tasks/main.yaml (jdk.table.xml)
+
+### Developer Tools
+- `files/verify-java-setup.sh` - Comprehensive installation verification script
+- `files/java-project.editorconfig` - EditorConfig template for Java projects
+- `files/java-project.gitignore` - Java/Maven/Gradle gitignore template
+
+### Documentation
+- `README.md` - Complete user documentation with troubleshooting
+- `QUICKSTART.md` - Quick setup guide
+- `IMPROVEMENTS.md` - Detailed changelog of improvements
+
+## Installation Flow
+
+1. **Install Java 21 JDK**
+   - macOS: `brew install --cask temurin21` (Eclipse Temurin)
+   - Linux: Download latest from java.net to `/opt/`
+
+2. **Configure Environment**
+   - Ensure `~/.sources/` directory exists
+   - Deploy platform-specific template to `~/.sources/java`
+   - Sets JAVA_HOME, PATH, MAVEN_OPTS, GRADLE_OPTS
+
+3. **IDE Integration (all optional)**
+   - VSCode: Create `~/Library/Application Support/Code/User/java-settings.json`
+   - Neovim: Deploy `~/.config/nvim/lua/plugins/java-lsp.lua`
+   - IntelliJ: Create JDK table in `~/Library/Application Support/JetBrains/IntelliJIdea*/options/jdk.table.xml`
+
+4. **Verification Tools**
+   - Install `verify-java-setup` script to `~/bin/`
+   - Copy VSCode extensions list to home directory
+   - Display post-installation instructions
+
+## Critical Requirements
+
+### Always Maintain
+✅ Dynamic JAVA_HOME (never hardcode specific minor versions)
+✅ Cross-platform support (macOS primary, Linux secondary)
+✅ IDE configs fail gracefully if software not installed
+✅ Follow `.sources/` pattern for environment variables
+✅ Idempotent operations
+✅ Comprehensive documentation
+
+### Never Do
+❌ Hardcode Java version paths (e.g., `/opt/jdk-21.0.2`)
+❌ Download Linux binaries on macOS
+❌ Fail if optional IDEs aren't installed
+❌ Overwrite user's main VSCode settings.json
+❌ Break on Java upgrades
+❌ Skip platform detection
+
+## IDE-Specific Notes
+
+### VSCode Integration
+- Extension recommendations: Java Extension Pack, RedHat Java, Spring Boot, SonarLint
+- Settings created as separate file (java-settings.json) to avoid conflicts
+- Configures: java.home, java.configuration.runtimes, formatting, debugging
+
+### Neovim (LazyVim)
+- Uses nvim-jdtls (de-facto standard for Java in Neovim)
+- Mason packages: jdtls, java-test, java-debug-adapter
+- Features: LSP, debugging, testing, formatting (Google Java Style), Lombok support
+- Auto-attaches when opening .java files
+
+### IntelliJ IDEA
+- Configures JDK table with temurin-21
+- Supports multiple versions via `intellij_version` variable
+- Both standalone and Toolbox installations
+- Uses `ignore_errors: yes` (graceful if not installed)
+
+## Variables You Can Configure
+
+```yaml
+intellij_version: "2024.1"        # IntelliJ IDEA version
+java_version: "21"                # Java major version
+maven_heap_size: "2048m"          # Maven JVM heap
+gradle_heap_size: "2048m"         # Gradle JVM heap
+```
+
+## Common Tasks & How to Approach
+
+### Adding New IDE Support
+1. Create configuration file in `files/`
+2. Add task in `tasks/main.yaml` with platform detection
+3. Use `ignore_errors: yes` for graceful degradation
+4. Update README.md with setup instructions
+5. Update `verify-java-setup.sh` to check the configuration
+
+### Changing Java Version (e.g., Java 17, 23)
+1. Update `java_version` variable in `vars/main.yaml`
+2. Update Homebrew cask name (e.g., `temurin17`)
+3. Update templates to use new version in detection
+4. Update all documentation references
+5. Test on both macOS and Linux
+
+### Updating Environment Variables
+1. Modify templates (`jdk-21-source-*.j2`)
+2. Keep dynamic detection (never hardcode paths)
+3. Test that JAVA_HOME survives upgrades
+4. Update `verify-java-setup.sh` to test changes
+
+### Adding Build Tool Configuration
+1. Add variables to `vars/main.yaml`
+2. Add to environment templates
+3. Document in README.md
+4. Test with actual Maven/Gradle projects
+
+## Pre-Flight Checklist for Changes
+
+Before modifying this role, verify:
+
+- [ ] Does this maintain backward compatibility?
+- [ ] Does JAVA_HOME remain dynamic?
+- [ ] Does this work on both macOS and Linux?
+- [ ] Do IDE integrations use `ignore_errors: yes`?
+- [ ] Is the change idempotent?
+- [ ] Does it follow the `.sources/` pattern?
+- [ ] Is README.md updated?
+- [ ] Is `verify-java-setup.sh` updated to test the change?
+- [ ] Are platform-specific conditionals correct?
+- [ ] Does it handle missing software gracefully?
+
+## Success Criteria
+
+Role is working correctly when:
+
+1. ✅ `java -version` shows Java 21
+2. ✅ `echo $JAVA_HOME` shows correct path
+3. ✅ `verify-java-setup` passes all checks
+4. ✅ VSCode recognizes Java 21 (if installed)
+5. ✅ Neovim LSP works with .java files (if installed)
+6. ✅ IntelliJ shows Java 21 SDK (if installed)
+7. ✅ Can compile and run Java programs
+8. ✅ Maven/Gradle use correct Java version
+9. ✅ Upgrading Java doesn't break JAVA_HOME
+10. ✅ Role can run multiple times without errors
+
+## Integration with Other Roles
+
+### Dependencies
+- **bash role**: Creates `~/.sources/` directory and sources all files in it
+- **vim role**: Provides Neovim configuration structure at `~/.config/nvim/`
+- **Homebrew**: Must be pre-installed on macOS
+
+### Shell Integration
+The bash role sources all files in `~/.sources/` via this pattern:
+```bash
+if [ -d ~/.sources ]; then
+    for file in ~/.sources/*; do
+        [ -f "$file" ] && source "$file"
+    done
+fi
+```
+
+This is why we deploy to `~/.sources/java` - it's automatically loaded.
+
+## Troubleshooting Guidelines
+
+### JAVA_HOME not set
+- User needs to source shell config: `source ~/.zshrc`
+- Check `~/.sources/java` exists and has correct content
+- Verify shell rc file includes sourcing logic (bash role)
+
+### Neovim LSP not working
+- Check `:Mason` shows jdtls installed
+- Verify Java file has project markers (pom.xml, build.gradle)
+- Check `:LspLog` for errors
+- Try `:LspRestart`
+
+### VSCode not using Java 21
+- Check `java-settings.json` exists and has correct paths
+- Verify Java 21 is actually installed
+- Try "Reload Window" in VSCode
+- Check VSCode Java extension is installed
+
+### Java upgrade breaks JAVA_HOME
+- This shouldn't happen if using dynamic detection
+- macOS: Verify `/usr/libexec/java_home -v 21` works
+- Linux: Check jdk-21* directory exists in /opt
+- May need to re-source shell config
+
+## Non-Goals (Out of Scope)
+
+This role does NOT:
+- Install multiple Java versions (only Java 21)
+- Provide Java version switching (use jenv/sdkman separately)
+- Install Maven or Gradle (separate tools)
+- Create Java projects (use mvn archetype or gradle init)
+- Configure Eclipse IDE (only VSCode, Neovim, IntelliJ)
+- Set up CI/CD pipelines
+- Install application servers (Tomcat, WildFly, etc.)
+
+## Future Enhancement Candidates
+
+Consider for future versions:
+- Multi-version Java support (17, 21, latest)
+- Integration with jenv or sdkman for version switching
+- Eclipse IDE configuration
+- Optional Maven/Gradle installation
+- Spring Boot specific configurations
+- Kotlin compiler and tooling
+- Android SDK integration
+- Docker-based Java development environment
+
+## Key Design Decisions & Rationale
+
+### Why Eclipse Temurin?
+- Official successor to AdoptOpenJDK
+- Free, open-source, well-maintained
+- Excellent Homebrew support on macOS
+- LTS support with security updates
+
+### Why Dynamic JAVA_HOME?
+- Survives Java minor version upgrades
+- `/usr/libexec/java_home` is Apple's recommended approach
+- Allows multiple Java versions (user can override)
+- More maintainable than hardcoded paths
+
+### Why nvim-jdtls?
+- De-facto standard for Java in Neovim
+- Better Java-specific features than generic LSP
+- LazyVim community expects it
+- Supports debugging and testing, not just editing
+
+### Why Separate VSCode Settings File?
+- Don't overwrite user's main settings.json
+- Allow users to merge settings manually
+- Easier to troubleshoot Java-specific issues
+- Can be deleted without breaking other settings
+
+## Last Updated
+2025-11-19 - Major rewrite for macOS support and IDE integration
