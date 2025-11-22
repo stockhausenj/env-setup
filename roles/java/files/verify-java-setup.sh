@@ -102,6 +102,18 @@ fi
 # Neovim
 check_file "$HOME/.config/nvim/lua/plugins/java-lsp.lua"
 
+# Lombok for Neovim
+echo ""
+echo "5a. Checking Lombok Configuration..."
+LOMBOK_JAR="$HOME/.local/share/nvim/mason/packages/jdtls/lombok.jar"
+if check_file "$LOMBOK_JAR"; then
+    LOMBOK_SIZE=$(stat -f%z "$LOMBOK_JAR" 2>/dev/null || stat -c%s "$LOMBOK_JAR" 2>/dev/null)
+    echo -e "${GREEN}✓${NC} Lombok JAR size: $LOMBOK_SIZE bytes"
+else
+    echo -e "${RED}✗${NC} Lombok JAR not found at $LOMBOK_JAR"
+    echo -e "${YELLOW}⚠${NC} Run the ansible playbook again to download lombok.jar"
+fi
+
 echo ""
 
 # 6. Check build tools (optional)
@@ -164,6 +176,48 @@ fi
 rm -rf "$TEST_DIR"
 echo ""
 
+# 9. Check current directory for Java project and Lombok
+echo "9. Checking Current Directory for Java Project..."
+if [ -f "pom.xml" ]; then
+    echo -e "${GREEN}✓${NC} Maven project detected (pom.xml found)"
+    echo ""
+    echo "Checking for Lombok dependency in pom.xml..."
+    if grep -q "lombok" pom.xml; then
+        echo -e "${GREEN}✓${NC} Lombok dependency found in pom.xml"
+    else
+        echo -e "${RED}✗${NC} Lombok dependency NOT found in pom.xml"
+        echo -e "${YELLOW}⚠${NC} Add Lombok to your pom.xml:"
+        echo ""
+        echo "<dependency>"
+        echo "    <groupId>org.projectlombok</groupId>"
+        echo "    <artifactId>lombok</artifactId>"
+        echo "    <version>1.18.30</version>"
+        echo "    <scope>provided</scope>"
+        echo "</dependency>"
+    fi
+elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
+    GRADLE_FILE="build.gradle"
+    [ -f "build.gradle.kts" ] && GRADLE_FILE="build.gradle.kts"
+    echo -e "${GREEN}✓${NC} Gradle project detected ($GRADLE_FILE found)"
+    echo ""
+    echo "Checking for Lombok dependency in $GRADLE_FILE..."
+    if grep -q "lombok" "$GRADLE_FILE"; then
+        echo -e "${GREEN}✓${NC} Lombok dependency found in $GRADLE_FILE"
+    else
+        echo -e "${RED}✗${NC} Lombok dependency NOT found in $GRADLE_FILE"
+        echo -e "${YELLOW}⚠${NC} Add Lombok to your $GRADLE_FILE:"
+        echo ""
+        echo "dependencies {"
+        echo "    compileOnly 'org.projectlombok:lombok:1.18.30'"
+        echo "    annotationProcessor 'org.projectlombok:lombok:1.18.30'"
+        echo "}"
+    fi
+else
+    echo -e "${YELLOW}⚠${NC} No Maven or Gradle project found in current directory"
+    echo "Navigate to your Java project directory and run this script again to check Lombok configuration"
+fi
+echo ""
+
 # Summary
 echo "======================================"
 echo "Verification Complete!"
@@ -173,3 +227,10 @@ echo "If you see any errors above, please:"
 echo "1. Source your shell configuration: source ~/.zshrc or source ~/.bash_profile"
 echo "2. Check the Java role README for troubleshooting"
 echo "3. Verify the Ansible playbook ran successfully"
+echo ""
+echo "For Lombok in Neovim:"
+echo "1. Ensure lombok.jar exists in ~/.local/share/nvim/mason/packages/jdtls/"
+echo "2. Add Lombok as a dependency in your pom.xml or build.gradle"
+echo "3. In Neovim, run :JavaCleanWorkspace to clean JDTLS cache"
+echo "4. Run :JavaShowLombokStatus to verify Lombok configuration"
+echo "5. Restart Neovim after making any changes"
