@@ -78,7 +78,29 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git kube-ps1)
+plugins=(
+  git
+  sudo
+  colored-man-pages
+  command-not-found
+  extract
+  z
+  web-search
+  jsontools
+  copypath
+  copyfile
+  dirhistory
+  last-working-dir
+  docker
+  docker-compose
+  golang
+  npm
+  node
+  python
+  pip
+  tmux
+  ansible
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -115,7 +137,6 @@ bindkey -v
 
 # Find all files in .sources directory and source them
 if [ -d ~/.sources ]; then
-    # Find all files in .sources directory and source them
     for file in ~/.sources/*; do
         if [ -f "$file" ] && [ -r "$file" ]; then
             source "$file"

@@ -4,118 +4,129 @@
   ansible.builtin.file:
     path: "{{ ansible_facts['env']['HOME'] }}/.sources"
     state: directory
-    mode: "0755"
+    mode: 0755
 
 # bash
 - name: copy bashrc
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
+  ansible.builtin.copy:
     src: bashrc
-    dest: $HOME/.bashrc
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
 - name: update bash_profile
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  template:
+  ansible.builtin.template:
     src: bash_profile.j2
-    dest: $HOME/.bash_profile
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
 - name: add ubuntu path
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  lineinfile:
-    dest: $HOME/.bash_profile
+  ansible.builtin.lineinfile:
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
-  with_items:
+  loop:
     - { regexp: "PATH=", line: 'PATH="$HOME/bin:$HOME/.local/bin:$PATH"' }
 - name: enable vi option
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  lineinfile:
-    dest: $HOME/.bash_profile
+  ansible.builtin.lineinfile:
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
-  with_items:
+  loop:
     - { regexp: "set -o", line: "set -o vi" }
 
 # zsh
-- name: download oh-my-zsh
+- name: clone oh-my-zsh
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  get_url:
-    url: https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-    dest: /private/tmp/ohmyzsh-install.sh
-    mode: 0755
-- name: delete oh-my-zsh
-  file:
-    state: absent
-    path: $HOME/.oh-my-zsh
-- name: install oh-my-zsh
+  ansible.builtin.git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh"
+    depth: 1
+    update: true
+- name: clone PowerLevel10k theme
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  command: /private/tmp/ohmyzsh-install.sh
-- name: clone PowerLevel10k into the Neovim config directory
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
-  git:
+  ansible.builtin.git:
     repo: https://github.com/romkatv/powerlevel10k
-    dest: $HOME/.oh-my-zsh/custom/powerlevel10k
-    update: yes
+    dest: "{{ ansible_facts['env']['HOME'] }}/.oh-my-zsh/custom/powerlevel10k"
+    update: true
 - name: copy zprofile
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  copy:
+  ansible.builtin.copy:
     src: zprofile
-    dest: $HOME/.zprofile
+    dest: "{{ ansible_facts['env']['HOME'] }}/.zprofile"
 - name: copy zshrc
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  copy:
+  ansible.builtin.copy:
     src: zshrc
-    dest: $HOME/.zshrc
+    dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
 
 # mcfly
-- name: install mcfly
+- name: install mcfly on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
     name: mcfly
     state: latest
-- name: download mcfly
+- name: download mcfly installer on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  get_url:
+  ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/cantino/mcfly/master/ci/install.sh
     dest: /tmp/mcfly-install.sh
     mode: 0755
-- name: install mcfly
+- name: install mcfly on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  command: /tmp/mcfly-install.sh --git cantino/mcfly --force
+  ansible.builtin.command: /tmp/mcfly-install.sh --git cantino/mcfly --force
+  args:
+    creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/mcfly"
   become: true
-- name: copy mcfly source
+- name: copy mcfly source for bash
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
+  ansible.builtin.copy:
     src: mcfly-source-bash
-    dest: $HOME/.sources/mcfly
-- name: copy mcfly source
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/mcfly"
+- name: copy mcfly source for zsh
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  copy:
+  ansible.builtin.copy:
     src: mcfly-source-zsh
-    dest: $HOME/.sources/mcfly
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/mcfly"
 
 # httpie
-- name: install HTTPie
+- name: install HTTPie on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
     name: httpie
     state: latest
-- name: install HTTPie
+- name: install HTTPie on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     name: httpie
+    state: present
+  become: true
+
+# btop
+- name: install btop on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: btop
+    state: latest
+- name: install btop on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name: btop
+    state: present
   become: true
