@@ -96,7 +96,7 @@
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
-    name: johanhaleby/kubetail/kubetail
+    name: kubetail
     state: present
 - name: Copy kubetail script on Ubuntu
   when:
@@ -158,7 +158,7 @@
     - ansible_facts['os_family'] == 'Darwin'
   ansible.builtin.get_url:
     url: "https://github.com/sh0rez/kubectl-neat-diff/releases/download/v{{ ndiff_version }}/kubectl-neat-diff-darwin-{{ ndiff_arch }}"
-    dest: /usr/local/bin/kubectl-neat-diff
+    dest: /opt/homebrew/bin/kubectl-neat-diff
     mode: 0755
   become: true
 - name: Detect architecture for neat-diff on Ubuntu
