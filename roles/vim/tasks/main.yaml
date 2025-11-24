@@ -81,24 +81,20 @@
       - gopls
       - fzf
     state: latest
-- name: create .nvim config directory
+- name: check if nvim dir exists
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  file:
-    path: $HOME/.config/nvim
-    state: directory
-- name: check if nvim dir exists
-  stat:
-    path: $HOME/.config/nvim
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
   register: nvim_dir_exists
 - name: clone LazyVim into the Neovim config directory
   when:
     - ansible_facts['os_family'] == 'Darwin'
     - not nvim_dir_exists.stat.exists
-  git:
+  ansible.builtin.git:
     repo: https://github.com/LazyVim/starter
-    dest: $HOME/.config/nvim
-    update: yes
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
+    update: true
     force: true
 
 # nvim all
