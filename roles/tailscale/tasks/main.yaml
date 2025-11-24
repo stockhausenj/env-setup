@@ -1,0 +1,78 @@
+---
+# Install Tailscale on macOS
+- name: Install Tailscale app on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew_cask:
+    name: tailscale
+    state: present
+
+# Install Tailscale on Ubuntu
+- name: Add Tailscale GPG key on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt_key:
+    url: https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_facts['distribution_release'] }}.noarmor.gpg
+    state: present
+  become: true
+
+- name: Add Tailscale repository on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt_repository:
+    repo: "deb https://pkgs.tailscale.com/stable/ubuntu {{ ansible_facts['distribution_release'] }} main"
+    state: present
+    filename: tailscale
+  become: true
+
+- name: Update apt cache after adding Tailscale repo
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
+
+- name: Install Tailscale on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name: tailscale
+    state: present
+  become: true
+
+# Optional: Start and enable Tailscale service on Ubuntu
+- name: Enable and start Tailscale service on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - tailscale_enable_service | default(true)
+  ansible.builtin.systemd:
+    name: tailscaled
+    enabled: true
+    state: started
+  become: true
+
+# Optional: Connect to Tailscale network
+- name: Check if Tailscale is already connected
+  when:
+    - tailscale_authkey is defined
+    - tailscale_authkey | length > 0
+  ansible.builtin.command: tailscale status
+  register: tailscale_status
+  changed_when: false
+  failed_when: false
+
+- name: Connect to Tailscale network with auth key
+  when:
+    - tailscale_authkey is defined
+    - tailscale_authkey | length > 0
+    - tailscale_status.rc != 0
+  ansible.builtin.command: "tailscale up --authkey={{ tailscale_authkey }} {{ tailscale_up_args }}"
+  become: true
+
+- name: Update Tailscale connection settings (if already connected)
+  when:
+    - tailscale_up_args | length > 0
+    - tailscale_status is defined
+    - tailscale_status.rc == 0
+  ansible.builtin.command: "tailscale up {{ tailscale_up_args }}"
+  become: true

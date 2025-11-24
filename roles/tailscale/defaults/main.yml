@@ -1,0 +1,16 @@
+---
+# Tailscale configuration
+
+# Enable and start the Tailscale service on Ubuntu
+# On macOS, the service is managed by launchd automatically
+tailscale_enable_service: true
+
+# Optional: Tailscale auth key for automatic connection
+# Leave empty to manually authenticate after installation
+# Generate an auth key at: https://login.tailscale.com/admin/settings/keys
+tailscale_authkey: ""
+
+# Optional: Additional tailscale up arguments
+# Examples: --accept-routes, --advertise-routes=192.168.1.0/24, --ssh
+# Common: --accept-routes to accept subnet routes from other devices
+tailscale_up_args: "--accept-routes"
