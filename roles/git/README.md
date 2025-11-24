@@ -41,6 +41,7 @@ git_install_diff_so_fancy: true      # Install diff-so-fancy for better diffs
 git_install_git_lfs: true            # Install Git Large File Storage
 git_install_lazygit_macos: true      # Install lazygit terminal UI on macOS
 git_install_search_tools_ubuntu: true # Install ag and ugrep on Ubuntu
+git_install_search_tools_macos: true  # Install ag and ugrep on macOS
 
 # Merge tool configuration
 git_merge_tool_macos: opendiff       # Default merge tool for macOS
@@ -129,13 +130,11 @@ This file is gitignored and won't be overwritten by the role.
 - git - Version control system
 - git-lfs - Large File Storage extension
 - diff-so-fancy - Improved diff output formatting
+- silversearcher-ag (ag) - Fast code search tool
+- ugrep - Ultra-fast grep alternative
 
 ### macOS Only
 - lazygit - Terminal UI for git commands
-
-### Ubuntu Only
-- silversearcher-ag (ag) - Fast code search tool
-- ugrep - Ultra-fast grep alternative
 
 ## Platform Differences
 

@@ -8,6 +8,7 @@ git_install_diff_so_fancy: true
 git_install_git_lfs: true
 git_install_lazygit_macos: true
 git_install_search_tools_ubuntu: true
+git_install_search_tools_macos: true
 
 # Merge tool configuration (platform-specific defaults will be applied)
 git_merge_tool_macos: opendiff

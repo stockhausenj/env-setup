@@ -113,6 +113,22 @@
   become: true
 
 # macOS extras
+- name: Install silversearcher-ag on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - git_install_search_tools_macos | default(true)
+  community.general.homebrew:
+    name: the_silver_searcher
+    state: present
+
+- name: Install ugrep on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - git_install_search_tools_macos | default(true)
+  community.general.homebrew:
+    name: ugrep
+    state: present
+
 - name: Install lazygit
   when:
     - ansible_facts['os_family'] == 'Darwin'
