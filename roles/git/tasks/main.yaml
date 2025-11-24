@@ -1,31 +1,122 @@
 ---
-- name: Download and Deploy git-prompt.sh
-  get_url:
-    url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-    dest: $HOME/.git-prompt.sh
-- name: Deploy gitconfig
-  template:
-    src: gitconfig.j2
-    dest: $HOME/.gitconfig
-
-# ubuntu extras
-- name: Install silversearcher-ag
+# Install git
+- name: Install git on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
-    name: silversearcher-ag
-  become: true
-- name: Install ugrep
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
-    name: ugrep
+  ansible.builtin.apt:
+    name: git
+    state: present
   become: true
 
-# macos extras
-- name: install lazygit
+- name: Install git on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
+    name: git
+    state: present
+
+# Install git-lfs
+- name: Install git-lfs on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - git_install_git_lfs | default(true)
+  ansible.builtin.apt:
+    name: git-lfs
+    state: present
+  become: true
+
+- name: Install git-lfs on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - git_install_git_lfs | default(true)
+  community.general.homebrew:
+    name: git-lfs
+    state: present
+
+- name: Initialize git-lfs
+  when:
+    - git_install_git_lfs | default(true)
+  ansible.builtin.command: git lfs install
+  args:
+    creates: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
+  changed_when: false
+
+# Git prompt and configuration
+- name: Download and Deploy git-prompt.sh
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+    dest: "{{ ansible_facts['env']['HOME'] }}/.git-prompt.sh"
+    mode: '0644'
+
+- name: Deploy gitignore
+  ansible.builtin.template:
+    src: gitignore.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitignore"
+    mode: '0644'
+
+- name: Deploy gitattributes
+  ansible.builtin.template:
+    src: gitattributes.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitattributes"
+    mode: '0644'
+
+- name: Deploy gitconfig
+  ansible.builtin.template:
+    src: gitconfig.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
+    mode: '0644'
+
+# Install diff-so-fancy
+- name: Ensure .local/bin directory exists
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - git_install_diff_so_fancy | default(true)
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+    state: directory
+    mode: '0755'
+
+- name: Install diff-so-fancy on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - git_install_diff_so_fancy | default(true)
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/diff-so-fancy"
+    mode: '0755'
+
+- name: Install diff-so-fancy on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - git_install_diff_so_fancy | default(true)
+  community.general.homebrew:
+    name: diff-so-fancy
+    state: present
+
+# Ubuntu extras
+- name: Install silversearcher-ag
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - git_install_search_tools_ubuntu | default(true)
+  ansible.builtin.apt:
+    name: silversearcher-ag
+    state: present
+  become: true
+
+- name: Install ugrep
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - git_install_search_tools_ubuntu | default(true)
+  ansible.builtin.apt:
+    name: ugrep
+    state: present
+  become: true
+
+# macOS extras
+- name: Install lazygit
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - git_install_lazygit_macos | default(true)
+  community.general.homebrew:
     name: lazygit
-    state: latest
+    state: present

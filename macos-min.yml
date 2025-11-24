@@ -11,3 +11,9 @@
         name: vim
     - include_role:
         name: kubectl
+    - include_role:
+        name: git
+      vars:
+        git_user_email: 'jay.stockhausen@gmail.com'
+        git_user_name: 'Jay Stockhausen'
+

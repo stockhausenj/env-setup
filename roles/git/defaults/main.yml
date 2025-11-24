@@ -1,0 +1,14 @@
+---
+# Git user configuration
+git_user_email: ""
+git_user_name: ""
+
+# Optional features
+git_install_diff_so_fancy: true
+git_install_git_lfs: true
+git_install_lazygit_macos: true
+git_install_search_tools_ubuntu: true
+
+# Merge tool configuration (platform-specific defaults will be applied)
+git_merge_tool_macos: opendiff
+git_merge_tool_ubuntu: vimdiff

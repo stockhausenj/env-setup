@@ -49,7 +49,11 @@
 
 # git mergetool
 [merge]
-	tool = opendiff
+{% if ansible_facts['os_family'] == 'Darwin' %}
+	tool = {{ git_merge_tool_macos | default('opendiff') }}
+{% else %}
+	tool = {{ git_merge_tool_ubuntu | default('vimdiff') }}
+{% endif %}
 
 # correct typos
 [help]
