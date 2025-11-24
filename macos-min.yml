@@ -14,6 +14,7 @@
     - include_role:
         name: git
       vars:
-        git_user_email: 'jay.stockhausen@gmail.com'
-        git_user_name: 'Jay Stockhausen'
-
+        git_user_email: "jay.stockhausen@gmail.com"
+        git_user_name: "Jay Stockhausen"
+    - include_role:
+        name: tailscale
