@@ -6,16 +6,8 @@
         update_homebrew: true
         upgrade_all: true
     - include_role:
-        name: git
-      vars:
-        git_user_email: "jay.stockhausen@gmail.com"
-        git_user_name: "Jay Stockhausen"
-    - include_role:
         name: bash
     - include_role:
         name: vim
     - include_role:
         name: kubectl
-      vars:
-        kubectl_version: "1.30.5"
-        ndiff_version: "0.2.0"

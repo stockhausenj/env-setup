@@ -1,0 +1,5 @@
+---
+# Default versions for kubectl role
+kubectl_version: "1.30.5"
+k9_version: "0.32.4"
+ndiff_version: "0.2.0"

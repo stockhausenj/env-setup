@@ -1,3 +1,15 @@
 #!/bin/bash
 
+source <(kubectl completion bash)
+alias k=kubectl
+alias kcc='kubectl config current-context'
+alias kdp='kubectl delete po'
+alias kgc='kubectl config get-contexts'
+alias kge='kubectl get events --sort-by='\''{.lastTimestamp}'\'
+alias kgp='kubectl get po'
+alias kl='kubectl logs '
+alias kpf='kubectl port-forward'
+alias ksc='kubectl config use-context'
+complete -F __start_kubectl k
 source /usr/local/bin/kube-ps1.sh
+export KUBECTL_EXTERNAL_DIFF=kubectl-neat-diff

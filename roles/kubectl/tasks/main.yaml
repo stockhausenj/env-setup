@@ -1,140 +1,176 @@
 ---
 # kubectl (required)
 - name: Create kube dir
-  file:
-    path: $HOME/.kube
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.kube"
     state: directory
-    mode: "0755"
-- name: Install kubectl
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  get_url:
-    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/linux/amd64/kubectl
-    dest: /usr/local/bin/kubectl
     mode: 0755
-  become: true
-- name: Install kubectl
+
+# kubectl installation
+- name: Install kubectl on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  get_url:
-    url: https://dl.k8s.io/release/v{{ kubectl_version }}/bin/darwin/arm64/kubectl
-    dest: /usr/local/bin/kubectl
-    mode: 0755
+  community.general.homebrew:
+    name: kubectl
+    state: present
+- name: Install kubectl on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name: kubectl
+    state: present
   become: true
-- name: Copy kube-ps1 script to kube dir
-  copy:
+
+# kube-ps1
+- name: Install kube-ps1 on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: kube-ps1
+    state: present
+- name: Copy kube-ps1 script on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.copy:
     src: kube-ps1.sh
     dest: /usr/local/bin/kube-ps1.sh
-    mode: "0755"
+    mode: 0755
   become: true
 
 # kube bash stuff
-- name: copy kube source
+- name: copy kube source for bash
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
+  ansible.builtin.copy:
     src: kube-source-bash
-    dest: $HOME/.sources/kube
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/kube"
+    mode: 0644
 
 # kube zsh stuff
-- name: copy kube source
+- name: copy kube source for zsh
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  copy:
+  ansible.builtin.copy:
     src: kube-source-zsh
-    dest: $HOME/.sources/kube
+    dest: "{{ ansible_facts['env']['HOME'] }}/.sources/kube"
+    mode: 0644
 
 # kubectx
-- name: Copy kubectx script to path
+- name: Install kubectx on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: kubectx
+    state: present
+- name: Copy kubectx script on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
+  ansible.builtin.copy:
     src: kubectx
     dest: /usr/local/bin/kubectx
     owner: root
     group: root
-    mode: "0755"
-  become: true
-- name: Copy kubectx script to path
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
-  copy:
-    src: kubectx
-    dest: /usr/local/bin/kubectx
-    owner: root
-    group: wheel
-    mode: "0755"
+    mode: 0755
   become: true
 
 # kubens
-- name: Copy kubens script to path
+- name: Install kubens on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: kubectx
+    state: present
+- name: Copy kubens script on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
+  ansible.builtin.copy:
     src: kubens
     dest: /usr/local/bin/kubens
     owner: root
     group: root
-    mode: "0755"
-  become: true
-- name: Copy kubens script to path
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
-  copy:
-    src: kubens
-    dest: /usr/local/bin/kubens
-    owner: root
-    group: wheel
-    mode: "0755"
+    mode: 0755
   become: true
 
 # kubetail
-- name: Install kubetail
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  copy:
-    src: kubetail
-    dest: /usr/local/bin/kubetail
-    owner: root
-    group: root
-    mode: "0755"
-  become: true
-- name: Install kubetail
+- name: Install kubetail on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
   community.general.homebrew:
     name: johanhaleby/kubetail/kubetail
-    state: latest
-
-# k9s
-- name: Download k9s
+    state: present
+- name: Copy kubetail script on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  unarchive:
-    src: https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_amd64.tar.gz
-    dest: /tmp
-    remote_src: yes
-- name: Install k9s
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  shell: mv /tmp/k9s /usr/bin/k9s && rm -rf /tmp/k9s
-  become: true
-- name: Modify k9s binary
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  file:
-    path: /usr/bin/k9s
+  ansible.builtin.copy:
+    src: kubetail
+    dest: /usr/local/bin/kubetail
     owner: root
     group: root
-    mode: "0755"
+    mode: 0755
   become: true
 
-# neat-diff
-- name: Download neat-diff
+# k9s
+- name: Install k9s on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: k9s
+    state: present
+- name: Detect architecture for k9s on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  get_url:
-    url: https://github.com/sh0rez/kubectl-neat-diff/releases/download/v{{ ndiff_version }}/kubectl-neat-diff-linux-amd64
+  ansible.builtin.set_fact:
+    k9s_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' }}"
+- name: Download k9s on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.unarchive:
+    src: "https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_{{ k9s_arch }}.tar.gz"
+    dest: /tmp
+    remote_src: true
+    creates: /usr/local/bin/k9s
+- name: Install k9s binary on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.copy:
+    src: /tmp/k9s
+    dest: /usr/local/bin/k9s
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+- name: Clean up k9s temp files on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.file:
+    path: /tmp/k9s
+    state: absent
+
+# neat-diff
+- name: Detect architecture for neat-diff on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  ansible.builtin.set_fact:
+    ndiff_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'arm64' else 'amd64' }}"
+- name: Download neat-diff on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  ansible.builtin.get_url:
+    url: "https://github.com/sh0rez/kubectl-neat-diff/releases/download/v{{ ndiff_version }}/kubectl-neat-diff-darwin-{{ ndiff_arch }}"
+    dest: /usr/local/bin/kubectl-neat-diff
+    mode: 0755
+  become: true
+- name: Detect architecture for neat-diff on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.set_fact:
+    ndiff_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' }}"
+- name: Download neat-diff on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.get_url:
+    url: "https://github.com/sh0rez/kubectl-neat-diff/releases/download/v{{ ndiff_version }}/kubectl-neat-diff-linux-{{ ndiff_arch }}"
     dest: /usr/local/bin/kubectl-neat-diff
     mode: 0755
   become: true
