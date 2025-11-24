@@ -3,15 +3,17 @@
 - name: Create .vim Directory
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  file:
-    path: $HOME/.vim
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.vim"
     state: directory
+    mode: '0755'
 - name: Create .vim Directories
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  file:
-    path: $HOME/.vim/{{ item }}
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.vim/{{ item }}"
     state: directory
+    mode: '0755'
   with_items:
     - autoload
     - colors
@@ -20,21 +22,22 @@
 - name: Download latest stable Neovim release
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
     dest: /tmp/nvim-linux64.tar.gz
+    mode: '0644'
 - name: Extract Neovim binary
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/nvim-linux64.tar.gz
     dest: /opt
-    remote_src: yes
+    remote_src: true
   become: true
 - name: Ensure correct permissions on Neovim binary
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  file:
+  ansible.builtin.file:
     path: /opt/nvim-linux64/bin/nvim
     mode: "0755"
     state: file
@@ -50,20 +53,23 @@
 - name: Install fd-find
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     name: fd-find
+    state: present
   become: true
 - name: Install ripgrep
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     name: ripgrep
+    state: present
   become: true
 - name: Install luarocks
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     name: luarocks
+    state: present
   become: true
 
 # nvim - Darwin
@@ -81,16 +87,23 @@
       - gopls
       - fzf
     state: latest
-- name: check if nvim dir exists
+- name: check if LazyVim init.lua exists
   when:
     - ansible_facts['os_family'] == 'Darwin'
   ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/init.lua"
+  register: lazyvim_init_exists
+- name: Remove incomplete nvim directory if LazyVim not installed
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not lazyvim_init_exists.stat.exists
+  ansible.builtin.file:
     path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
-  register: nvim_dir_exists
+    state: absent
 - name: clone LazyVim into the Neovim config directory
   when:
     - ansible_facts['os_family'] == 'Darwin'
-    - not nvim_dir_exists.stat.exists
+    - not lazyvim_init_exists.stat.exists
   ansible.builtin.git:
     repo: https://github.com/LazyVim/starter
     dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
