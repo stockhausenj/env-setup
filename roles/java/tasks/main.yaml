@@ -1,12 +1,20 @@
 ---
-- name: Install Java 21 JDK via Homebrew (macOS)
-  community.general.homebrew_cask:
-    name: temurin@21
+- name: Install OpenJDK 21 via Homebrew (macOS)
+  community.general.homebrew:
+    name: openjdk@21
     state: present
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
+
+- name: Create symlink for OpenJDK 21 (macOS)
+  file:
+    src: /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk
+    dest: /Library/Java/JavaVirtualMachines/openjdk-21.jdk
+    state: link
+  become: true
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Download and install OpenJDK 21 (Linux)
-  when: ansible_os_family != "Darwin"
+  when: ansible_facts["os_family"] != "Darwin"
   block:
     - name: Get latest Java 21 download URL
       shell: |
@@ -26,10 +34,10 @@
   community.general.homebrew:
     name: maven
     state: present
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Download and install Maven (Linux)
-  when: ansible_os_family != "Darwin"
+  when: ansible_facts["os_family"] != "Darwin"
   block:
     - name: Get latest Maven version
       shell: |
@@ -71,14 +79,14 @@
     src: jdk-21-source-macos.j2
     dest: "{{ ansible_facts['env']['HOME'] }}/.sources/java"
     mode: '0644'
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Configure JAVA_HOME for Linux
   template:
     src: jdk-21-source-linux.j2
     dest: "{{ ansible_facts['env']['HOME'] }}/.sources/java"
     mode: '0644'
-  when: ansible_os_family != "Darwin"
+  when: ansible_facts["os_family"] != "Darwin"
 
 # Maven Configuration
 - name: Ensure .m2 directory exists
@@ -148,7 +156,7 @@
     path: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User"
     state: directory
     mode: '0755'
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Configure VSCode Java settings (macOS)
   copy:
@@ -158,15 +166,15 @@
         "java.configuration.runtimes": [
           {
             "name": "JavaSE-21",
-            "path": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home",
+            "path": "/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home",
             "default": true
           }
         ],
-        "java.home": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home",
-        "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+        "java.home": "/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home",
+        "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home"
       }
     mode: '0644'
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 # Neovim (LazyVim) Configuration
 - name: Ensure Neovim plugins directory exists
@@ -201,7 +209,7 @@
     path: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/JetBrains/IntelliJIdea{{ intellij_version | default('2024.1') }}/options"
     state: directory
     mode: '0755'
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
   ignore_errors: yes
 
 - name: Configure IntelliJ IDEA JDK (macOS)
@@ -211,15 +219,15 @@
       <application>
         <component name="ProjectJdkTable">
           <jdk version="2">
-            <name value="temurin-21" />
+            <name value="openjdk-21" />
             <type value="JavaSDK" />
             <version value="java version &quot;21&quot;" />
-            <homePath value="/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home" />
+            <homePath value="/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home" />
           </jdk>
         </component>
       </application>
     mode: '0644'
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
   ignore_errors: yes
 
 # Verification and Helper Tools
@@ -241,7 +249,7 @@
     line: 'export PATH="$HOME/bin:$PATH"'
     regexp: '^export PATH="\$HOME/bin:\$PATH"'
     state: present
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Copy VSCode Java extensions recommendations
   copy:
