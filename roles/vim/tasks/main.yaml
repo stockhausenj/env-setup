@@ -120,6 +120,11 @@
     - plugins
     - config
 
+- name: Copy neo-tree.lua to nvim plugins diretory
+  ansible.builtin.copy:
+    src: nvim/lua/plugins/neo-tree.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/neo-tree.lua"
+    mode: 0644
 - name: Copy treesitter.lua to nvim plugins diretory
   ansible.builtin.copy:
     src: nvim/lua/plugins/treesitter.lua
