@@ -20,3 +20,5 @@
     #    name: tailscale
     - include_role:
         name: java
+    - include_role:
+        name: tmux

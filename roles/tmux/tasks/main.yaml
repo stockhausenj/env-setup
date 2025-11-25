@@ -1,12 +1,31 @@
-- name: Install tmux plugin manager (TPM)
-  git:
-    repo: https://github.com/tmux-plugins/tpm.git
-    dest: $HOME/.tmux/plugins/tpm
-- name: Copy tmux conf file
-  copy:
-    src: tmux.conf
-    dest: $HOME/.tmux.conf
-- name: Install tmux
-  apt:
+---
+# Ubuntu - Install tmux
+- name: Install tmux (Ubuntu)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
     name: tmux
+    state: present
   become: true
+
+# macOS - Install tmux
+- name: Install tmux (macOS)
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: tmux
+    state: latest
+
+# All OS - Install TPM
+- name: Install tmux plugin manager (TPM)
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm.git
+    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux/plugins/tpm"
+    update: true
+
+# All OS - Copy config
+- name: Copy tmux conf file
+  ansible.builtin.copy:
+    src: tmux.conf
+    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
+    mode: '0644'
