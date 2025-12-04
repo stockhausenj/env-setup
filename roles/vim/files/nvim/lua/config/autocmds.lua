@@ -21,3 +21,21 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.expandtab = true
   end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "yaml",
+  command = "setlocal textwidth=0 formatoptions-=t",
+})
+
+-- Open neo-tree when opening a directory
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function(data)
+    local directory = vim.fn.isdirectory(data.file) == 1
+    if directory then
+      vim.cmd.cd(data.file)
+      -- Delete the directory buffer
+      vim.cmd.bwipeout(data.buf)
+      require("neo-tree.command").execute({ toggle = true })
+    end
+  end,
+})
