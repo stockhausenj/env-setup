@@ -81,6 +81,7 @@
       - neovim
       - luarocks
       - ripgrep
+      - fd
       - node
       - sqlfluff
       - go
@@ -144,6 +145,16 @@
   ansible.builtin.copy:
     src: nvim/lua/plugins/lspconfig.lua
     dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/lspconfig.lua"
+    mode: 0644
+- name: Copy dap.lua to nvim plugins diretory
+  ansible.builtin.copy:
+    src: nvim/lua/plugins/dap.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/dap.lua"
+    mode: 0644
+- name: Copy snacks.lua to nvim plugins diretory
+  ansible.builtin.copy:
+    src: nvim/lua/plugins/snacks.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/snacks.lua"
     mode: 0644
 - name: Copy keymaps.lua to nvim config diretory
   ansible.builtin.copy:
