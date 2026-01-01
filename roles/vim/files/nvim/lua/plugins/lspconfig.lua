@@ -6,7 +6,18 @@ return {
 			servers = {
 				yamlls = {
 					schemaStore = {
-						enabled = false,
+						enabled = true,
+					},
+					settings = {
+						yaml = {
+							format = {
+								printWidth = 100,
+								bracketSpacing = true,
+								proseWrap = "preserve",
+								singleQuote = false,
+							},
+							keyOrdering = false,
+						},
 					},
 				},
 				gopls = {

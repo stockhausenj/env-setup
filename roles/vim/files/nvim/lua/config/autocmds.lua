@@ -24,7 +24,12 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "yaml",
-  command = "setlocal textwidth=0 formatoptions-=t",
+  callback = function()
+    vim.opt_local.textwidth = 0
+    vim.opt_local.formatoptions:remove("t")
+    vim.opt_local.indentkeys:remove("<:>")
+    vim.opt_local.indentkeys:remove("0-")
+  end,
 })
 
 -- Open neo-tree when opening a directory
