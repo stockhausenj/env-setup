@@ -9,7 +9,7 @@ return {
         yamlfmt = {
           prepend_args = {
             "-formatter",
-            "indent=2,include_document_start=false,retain_line_breaks_single=true,disallow_anchors=false,max_line_length=100,scan_folded_as_literal=false,indentless_arrays=true",
+            "indent=2,include_document_start=false,retain_line_breaks_single=true,disallow_anchors=false,max_line_length=100,scan_folded_as_literal=false,indentless_arrays=true,retain_quotes=true",
           },
         },
       },

@@ -71,9 +71,10 @@
 - name: install mcfly on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  community.general.homebrew:
-    name: mcfly
-    state: latest
+  ansible.builtin.command: brew install mcfly
+  register: mcfly_result
+  changed_when: "'already installed' not in mcfly_result.stderr"
+  failed_when: mcfly_result.rc != 0 and 'already installed' not in mcfly_result.stderr
 - name: download mcfly installer on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
@@ -105,9 +106,10 @@
 - name: install HTTPie on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  community.general.homebrew:
-    name: httpie
-    state: latest
+  ansible.builtin.command: brew install httpie
+  register: httpie_result
+  changed_when: "'already installed' not in httpie_result.stderr"
+  failed_when: httpie_result.rc != 0 and 'already installed' not in httpie_result.stderr
 - name: install HTTPie on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
@@ -120,13 +122,30 @@
 - name: install btop on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
-  community.general.homebrew:
-    name: btop
-    state: latest
+  ansible.builtin.command: brew install btop
+  register: btop_result
+  changed_when: "'already installed' not in btop_result.stderr"
+  failed_when: btop_result.rc != 0 and 'already installed' not in btop_result.stderr
 - name: install btop on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.apt:
     name: btop
+    state: present
+  become: true
+
+# nvtop
+- name: install nvtop on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+  ansible.builtin.command: brew install nvtop
+  register: nvtop_result
+  changed_when: "'already installed' not in nvtop_result.stderr"
+  failed_when: nvtop_result.rc != 0 and 'already installed' not in nvtop_result.stderr
+- name: install nvtop on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name: nvtop
     state: present
   become: true

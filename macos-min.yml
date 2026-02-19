@@ -2,9 +2,10 @@
 ---
 - hosts: all
   tasks:
-    - community.general.homebrew:
-        update_homebrew: true
-        upgrade_all: true
+    - name: update and upgrade homebrew
+      ansible.builtin.shell: brew update && brew upgrade
+      register: brew_result
+      changed_when: "'Already up-to-date' not in brew_result.stdout"
     - include_role:
         name: bash
     - include_role:

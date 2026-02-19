@@ -139,6 +139,10 @@ return {
         end,
         vtsls = function(_, opts)
           Snacks.util.lsp.on({ name = "vtsls" }, function(client, buffer)
+            if type(client) == "number" then
+              client = vim.lsp.get_client_by_id(client)
+            end
+            if not client then return end
             client.commands["_typescript.moveToFileRefactoring"] = function(command, ctx)
               ---@type string, string, lsp.Range
               local action, uri, range = unpack(command.arguments)
