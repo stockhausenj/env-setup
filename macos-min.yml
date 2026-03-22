@@ -1,6 +1,8 @@
 # ansible-playbook -i "localhost," -c local macos.yml -K
 ---
 - hosts: all
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
   tasks:
     - name: update and upgrade homebrew
       ansible.builtin.shell: brew update && brew upgrade

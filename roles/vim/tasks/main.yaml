@@ -26,6 +26,7 @@
     url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
     dest: /tmp/nvim-linux64.tar.gz
     mode: '0644'
+    force: true
 - name: Extract Neovim binary
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
@@ -87,6 +88,10 @@
       - go
       - gopls
       - fzf
+      - terraform
+      - jq
+      - shfmt
+      - stylua
     state: latest
 - name: check if LazyVim init.lua exists
   when:

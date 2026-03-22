@@ -4,6 +4,19 @@ return {
 		enabled = true,
 		opts = {
 			servers = {
+				bashls = {},
+				dockerls = {},
+				jsonls = {},
+				lua_ls = {
+					settings = {
+						Lua = {
+							workspace = { checkThirdParty = false },
+							completion = { callSnippet = "Replace" },
+							diagnostics = { globals = { "vim" } },
+						},
+					},
+				},
+				terraformls = {},
 				yamlls = {
 					schemaStore = {
 						enabled = true,
