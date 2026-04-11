@@ -1,0 +1,10 @@
+{# roles/claude/templates/settings.json.j2 #}
+{
+  "model": "{{ claude_model }}",
+  "enabledPlugins": {
+{% for plugin in claude_plugins %}
+    "{{ plugin }}": true{{ "," if not loop.last else "" }}
+{% endfor %}
+  },
+  "alwaysThinkingEnabled": {{ claude_always_thinking | lower }}
+}
