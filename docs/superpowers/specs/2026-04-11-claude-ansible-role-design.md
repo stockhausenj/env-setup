@@ -69,7 +69,7 @@ claude_always_thinking: true
 # External skills (cloned from git)
 claude_external_skills:
   - name: "excalidraw-diagram-skill"
-    repo: "https://github.com/anthropics/claude-code-skills-excalidraw.git"  # verify exact URL at implementation time
+    repo: "https://github.com/coleam00/excalidraw-diagram-skill.git"
 
 # Bundled skills (deployed from role's files/skills/)
 claude_bundled_skills:
