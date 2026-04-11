@@ -1,0 +1,69 @@
+---
+# --- Node.js ---
+- name: check if node is installed
+  ansible.builtin.shell: cmd.exe /c "node --version"
+  register: node_check
+  changed_when: false
+  failed_when: false
+
+- name: install node.js via winget
+  when: node_check.rc != 0
+  ansible.builtin.shell: cmd.exe /c "winget install OpenJS.NodeJS.LTS --version {{ claude_node_version }}.* --accept-source-agreements --accept-package-agreements"
+  register: node_install
+  changed_when: "'Successfully installed' in node_install.stdout"
+
+# --- Claude CLI ---
+- name: check if claude is installed
+  ansible.builtin.shell: cmd.exe /c "npx @anthropic-ai/claude-code --version"
+  register: claude_check
+  changed_when: false
+  failed_when: false
+
+- name: install claude cli
+  when: claude_check.rc != 0
+  ansible.builtin.shell: cmd.exe /c "npm install -g @anthropic-ai/claude-code"
+  register: claude_install
+  changed_when: "'added' in claude_install.stdout"
+
+# --- Config directory ---
+- name: create claude config directory
+  ansible.builtin.file:
+    path: "{{ claude_config_dir }}"
+    state: directory
+    mode: "0755"
+
+# --- Settings ---
+- name: deploy settings.json
+  ansible.builtin.template:
+    src: settings.json.j2
+    dest: "{{ claude_config_dir }}/settings.json"
+    mode: "0600"
+
+# --- Skills directory ---
+- name: create skills directory
+  ansible.builtin.file:
+    path: "{{ claude_config_dir }}/skills"
+    state: directory
+    mode: "0755"
+
+# --- External skills (git clone) ---
+- name: clone external skills
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ claude_config_dir }}/skills/{{ item.name }}"
+    depth: 1
+    update: true
+  loop: "{{ claude_external_skills }}"
+
+# --- Bundled skills (copy from role) ---
+- name: deploy bundled skills
+  ansible.builtin.copy:
+    src: "skills/{{ item }}/"
+    dest: "{{ claude_config_dir }}/skills/{{ item }}/"
+    mode: "0644"
+  loop: "{{ claude_bundled_skills }}"
+
+# --- Post-install reminder ---
+- name: remind user to login
+  ansible.builtin.debug:
+    msg: "Claude CLI installed. Run 'claude login' to authenticate."
