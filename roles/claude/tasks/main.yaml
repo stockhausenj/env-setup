@@ -1,27 +1,30 @@
 ---
-# --- Node.js ---
-- name: check if node is installed
-  ansible.builtin.shell: cmd.exe /c "node --version"
-  register: node_check
-  changed_when: false
-  failed_when: false
+# --- Node.js (platform-specific) ---
+- name: install node.js on macOS
+  when: ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: node
+    state: present
 
-- name: install node.js via winget
-  when: node_check.rc != 0
-  ansible.builtin.shell: cmd.exe /c "winget install OpenJS.NodeJS.LTS --version {{ claude_node_version }}.* --accept-source-agreements --accept-package-agreements"
-  register: node_install
-  changed_when: "'Successfully installed' in node_install.stdout"
+- name: install node.js on Ubuntu
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name:
+      - nodejs
+      - npm
+    state: present
+  become: true
 
-# --- Claude CLI ---
+# --- Claude CLI (shared) ---
 - name: check if claude is installed
-  ansible.builtin.shell: cmd.exe /c "npx @anthropic-ai/claude-code --version"
+  ansible.builtin.shell: claude --version
   register: claude_check
   changed_when: false
   failed_when: false
 
 - name: install claude cli
   when: claude_check.rc != 0
-  ansible.builtin.shell: cmd.exe /c "npm install -g @anthropic-ai/claude-code"
+  ansible.builtin.shell: npm install -g @anthropic-ai/claude-code
   register: claude_install
   changed_when: "'added' in claude_install.stdout"
 
