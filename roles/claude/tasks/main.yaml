@@ -39,6 +39,33 @@
     update_cache: true
   become: true
 
+# --- Azure CLI + DevOps extension ---
+- name: install azure cli on macOS
+  when: ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew:
+    name: azure-cli
+    state: present
+
+- name: install azure cli on Ubuntu
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.shell: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  args:
+    creates: /usr/bin/az
+  become: true
+
+- name: install azure devops extension
+  ansible.builtin.shell: az extension add --name azure-devops --yes
+  register: az_ext_result
+  changed_when: "'already installed' not in az_ext_result.stderr"
+  failed_when: false
+
+- name: configure azure devops defaults
+  when: claude_ado_organization != ""
+  ansible.builtin.shell: >
+    az devops configure --defaults
+    organization={{ claude_ado_organization }}
+    project={{ claude_ado_project }}
+
 # --- Claude CLI (shared) ---
 - name: check if claude is installed
   ansible.builtin.shell: claude --version
@@ -94,4 +121,4 @@
 # --- Post-install reminder ---
 - name: remind user to login
   ansible.builtin.debug:
-    msg: "Claude CLI installed. Run 'claude login' to authenticate."
+    msg: "Claude CLI installed. Run 'claude login' to authenticate. Run 'az login' and 'az devops configure --defaults organization=<org> project=<project>' to set up Azure DevOps."
