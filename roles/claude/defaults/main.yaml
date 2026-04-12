@@ -1,11 +1,8 @@
 ---
-# Windows user home (derived from WSL mount)
-claude_windows_home: "/mnt/c/Users/{{ ansible_user_id }}"
+# Claude config directory (works on both macOS and Ubuntu/WSL)
+claude_config_dir: "{{ ansible_facts['env']['HOME'] }}/.claude"
 
-# Claude config directory
-claude_config_dir: "{{ claude_windows_home }}/.claude"
-
-# Node.js major version for winget
+# Node.js major version
 claude_node_version: "22"
 
 # Plugins to enable in settings.json
