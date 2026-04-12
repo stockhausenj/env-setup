@@ -25,6 +25,7 @@
 - name: install claude cli
   when: claude_check.rc != 0
   ansible.builtin.shell: npm install -g @anthropic-ai/claude-code
+  become: "{{ true if ansible_facts['distribution'] == 'Ubuntu' else false }}"
   register: claude_install
   changed_when: "'added' in claude_install.stdout"
 
