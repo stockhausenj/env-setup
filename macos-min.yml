@@ -25,3 +25,5 @@
         name: java
     - include_role:
         name: tmux
+    - include_role:
+        name: claude
