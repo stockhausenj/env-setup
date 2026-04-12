@@ -11,10 +11,18 @@ claude_plugins:
   - "frontend-design@claude-plugins-official"
   - "code-review@claude-plugins-official"
   - "gopls-lsp@claude-plugins-official"
+  - "github@claude-plugins-official"
+  - "atlassian@claude-plugins-official"
+  - "microsoft-docs@claude-plugins-official"
+  - "slack@claude-plugins-official"
 
 # Claude settings
 claude_model: "opus"
 claude_always_thinking: true
+
+# Azure DevOps defaults (set to configure az devops CLI defaults)
+claude_ado_organization: ""
+claude_ado_project: ""
 
 # External skills (cloned from git)
 claude_external_skills:
@@ -24,3 +32,4 @@ claude_external_skills:
 # Bundled skills (deployed from role's files/skills/)
 claude_bundled_skills:
   - "hello-world"
+  - "azure-devops"
