@@ -15,6 +15,7 @@ claude_plugins:
   - "atlassian@claude-plugins-official"
   - "microsoft-docs@claude-plugins-official"
   - "slack@claude-plugins-official"
+  - "linear@claude-plugins-official"
 
 # Claude settings
 claude_model: "opus"

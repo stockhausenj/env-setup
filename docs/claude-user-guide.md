@@ -61,6 +61,10 @@ The first time you ask Claude to do something with Confluence, it will prompt yo
 
 You only need to do this once. Claude remembers the credentials after that.
 
+**Linear:**
+
+The first time you ask Claude to do something with Linear, it will prompt you to authenticate via your browser. Follow the prompts to authorize access. You only need to do this once.
+
 ---
 
 ## Sprint Planning and Backlog Grooming
@@ -124,6 +128,36 @@ Link work item 1234 as a child of 5670
 ```
 
 **Tip:** You can ask Claude to filter work items in many ways — by person, by state, by type, by sprint. Just describe what you're looking for.
+
+---
+
+## Tracking Linear Issues
+
+If your team uses Linear for issue tracking, Claude can create, search, and update issues directly. The Linear plugin loads automatically — no skill activation needed.
+
+**Example prompts:**
+
+```
+Show me my assigned Linear issues
+```
+
+```
+Create a Linear issue: Auth service returns 500 on expired tokens
+```
+
+```
+What issues are in the current cycle?
+```
+
+```
+Update Linear issue ABC-123 to In Progress
+```
+
+```
+Search Linear for issues related to authentication
+```
+
+**Tip:** The first time you use Linear with Claude, it will prompt you to authenticate. After that, it remembers your credentials.
 
 ---
 
@@ -339,6 +373,7 @@ Write a bash script that backs up our database before deployment
 |---|---|
 | See my sprint work | `/azure-devops Show my assigned items in the current sprint` |
 | Create a work item | `/azure-devops Create a bug: Login page returns 500 on empty email` |
+| See my Linear issues | `Show me my assigned Linear issues` |
 | Check ADO pipeline status | `/azure-devops Show recent pipeline runs` |
 | Debug a GitHub Actions failure | `Why did this workflow fail? <paste URL>` |
 | Review a PR | `Review PR #42` |
