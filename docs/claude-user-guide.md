@@ -22,6 +22,47 @@ Claude will always show you what it's about to do (like running a command or sen
 
 ---
 
+## Connecting Your Accounts
+
+Before you can use Claude with your work tools, you need to sign in to each service once. Open your terminal and run these commands.
+
+**Azure DevOps:**
+
+```
+az login
+```
+
+This opens a browser window. Sign in with your Microsoft account. Then tell the CLI which organization and project to use by default:
+
+```
+az devops configure --defaults organization=https://dev.azure.com/YOUR-ORG project=YOUR-PROJECT
+```
+
+Replace `YOUR-ORG` and `YOUR-PROJECT` with your actual values.
+
+**GitHub:**
+
+```
+gh auth login
+```
+
+Follow the prompts. Choose "GitHub.com", then "Login with a web browser". It will give you a code to enter in your browser.
+
+**Confluence (Atlassian):**
+
+1. Go to https://id.atlassian.com/manage-profile/security/api-tokens in your browser
+2. Click "Create API token" and give it a name (e.g. "Claude")
+3. Copy the token
+
+The first time you ask Claude to do something with Confluence, it will prompt you for:
+- Your Atlassian site URL (e.g. `your-company.atlassian.net`)
+- Your email address
+- The API token you just created
+
+You only need to do this once. Claude remembers the credentials after that.
+
+---
+
 ## Sprint Planning and Backlog Grooming
 
 Use Claude to quickly pull up your backlog, check sprint status, and create or move work items — all without opening the ADO web interface.
