@@ -116,6 +116,14 @@
     dest: "{{ claude_config_dir }}/settings.json"
     mode: "0600"
 
+# --- Plugins ---
+- name: install claude plugins
+  ansible.builtin.shell: "claude plugins install {{ item }}"
+  loop: "{{ claude_plugins }}"
+  register: plugin_result
+  changed_when: "'installed' in plugin_result.stdout"
+  failed_when: false
+
 # --- Skills directory ---
 - name: create skills directory
   ansible.builtin.file:
