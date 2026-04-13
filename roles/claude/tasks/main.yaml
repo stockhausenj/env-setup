@@ -66,6 +66,28 @@
     organization={{ claude_ado_organization }}
     project={{ claude_ado_project }}
 
+# --- Claude Desktop (for Cowork - PowerPoint, Word, Excel) ---
+- name: install claude desktop on macOS
+  when: ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew_cask:
+    name: claude
+    state: present
+
+- name: check if claude desktop is installed on Ubuntu (WSL)
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.shell: cmd.exe /c "winget list --id Anthropic.Claude"
+  register: claude_desktop_check
+  changed_when: false
+  failed_when: false
+
+- name: install claude desktop on Ubuntu (WSL)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - claude_desktop_check.rc != 0 or 'Anthropic.Claude' not in claude_desktop_check.stdout
+  ansible.builtin.shell: cmd.exe /c "winget install Anthropic.Claude --accept-source-agreements --accept-package-agreements"
+  register: claude_desktop_install
+  changed_when: "'Successfully installed' in claude_desktop_install.stdout"
+
 # --- Claude CLI (shared) ---
 - name: check if claude is installed
   ansible.builtin.shell: claude --version

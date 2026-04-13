@@ -127,7 +127,7 @@ Link work item 1234 as a child of 5670
 
 Get help drafting design docs, retrospective summaries, onboarding guides, one-pagers, and other documents. Claude can also read Confluence pages and help you update them.
 
-**Example prompts:**
+**Example prompts (Claude Code — in the terminal):**
 
 ```
 Help me write a design doc for migrating our auth service to Azure AD
@@ -149,7 +149,27 @@ Summarize the Azure documentation for App Service deployment slots
 Write a one-pager explaining our team's branching strategy
 ```
 
-**Tip:** For Confluence, Claude can read and write pages directly. For Word and PowerPoint, describe what you need and Claude will draft the content — you can then paste it into the document.
+**Tip:** For Confluence, Claude can read and write pages directly.
+
+### PowerPoint, Word, and Excel with Cowork
+
+For generating actual Office files (.pptx, .docx, .xlsx), use **Claude Desktop** instead of the terminal. Claude Desktop has a feature called **Cowork** that can create finished Office documents and save them directly to your computer.
+
+To use Cowork, open the Claude Desktop app (search "Claude" in the Start menu or Applications). Then ask it to create your document:
+
+```
+Create a PowerPoint presentation for our quarterly team review with sections for accomplishments, metrics, and next quarter goals
+```
+
+```
+Generate a Word document with our team's incident response runbook
+```
+
+```
+Create an Excel spreadsheet tracking our Q2 OKRs with status columns
+```
+
+**Tip:** Cowork runs tasks in the background and delivers finished files to your desktop. You can edit them in Office afterward.
 
 ---
 
