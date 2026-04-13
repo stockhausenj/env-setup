@@ -67,10 +67,16 @@ You only need to do this once. Claude remembers the credentials after that.
 
 Use Claude to quickly pull up your backlog, check sprint status, and create or move work items — all without opening the ADO web interface.
 
-**Example prompts:**
+To activate the Azure DevOps skill, start your first request with `/azure-devops`:
 
 ```
-Show me all unassigned items in the current sprint
+/azure-devops Show me all unassigned items in the current sprint
+```
+
+After the skill is active, you can just type normally for the rest of the conversation:
+
+```
+What user stories are still in New state?
 ```
 
 ```
@@ -95,12 +101,10 @@ Move work item 1234 to Active and assign it to jane@company.com
 
 ## Tracking Work and Work Items
 
-Keep tabs on your team's work, check on bugs, add comments, and link related items.
-
-**Example prompts:**
+Keep tabs on your team's work, check on bugs, add comments, and link related items. If you're continuing from the Sprint Planning section, the Azure DevOps skill is already active. Otherwise, start with `/azure-devops`:
 
 ```
-Show me my assigned work items
+/azure-devops Show me my assigned work items
 ```
 
 ```
@@ -201,12 +205,10 @@ Are there any PRs waiting for my review?
 
 ## Checking Pipelines and Builds
 
-Quickly check on pipeline runs, see why something failed, or trigger a new build.
-
-**Example prompts:**
+Quickly check on pipeline runs, see why something failed, or trigger a new build. If the Azure DevOps skill isn't already active, start with `/azure-devops`:
 
 ```
-Show me the recent pipeline runs
+/azure-devops Show me the recent pipeline runs
 ```
 
 ```
@@ -251,11 +253,13 @@ Draft a Slack message announcing our new deployment process
 
 Create architecture diagrams, flowcharts, and other visuals that you can edit and export.
 
-**Example prompts:**
+To activate the Excalidraw diagram skill, start your first request with `/excalidraw-diagram-skill`:
 
 ```
-Draw a diagram of our deployment pipeline
+/excalidraw-diagram-skill Draw a diagram of our deployment pipeline
 ```
+
+After the skill is active, you can just type normally for the rest of the conversation:
 
 ```
 Create an architecture diagram showing the API gateway, microservices, and database
@@ -303,13 +307,13 @@ Write a bash script that backs up our database before deployment
 
 | I want to... | Ask Claude... |
 |---|---|
-| See my sprint work | "Show my assigned items in the current sprint" |
-| Create a work item | "Create a bug: Login page returns 500 on empty email" |
-| Check pipeline status | "Show recent pipeline runs" |
-| Review a PR | "Review PR #42" |
-| Write a document | "Help me draft a design doc for ..." |
-| Update Confluence | "Help me update our runbook in Confluence" |
-| Send a Slack message | "Send a message to #team: ..." |
-| Create a diagram | "Draw an architecture diagram of ..." |
-| Fix a script | "This pipeline YAML is failing — help me fix it" |
-| Look up Azure docs | "How do I configure Azure App Service custom domains?" |
+| See my sprint work | `/azure-devops Show my assigned items in the current sprint` |
+| Create a work item | `/azure-devops Create a bug: Login page returns 500 on empty email` |
+| Check pipeline status | `/azure-devops Show recent pipeline runs` |
+| Review a PR | `Review PR #42` |
+| Write a document | `Help me draft a design doc for ...` |
+| Update Confluence | `Help me update our runbook in Confluence` |
+| Send a Slack message | `Send a message to #team: ...` |
+| Create a diagram | `/excalidraw-diagram-skill Draw an architecture diagram of ...` |
+| Fix a script | `This pipeline YAML is failing — help me fix it` |
+| Look up Azure docs | `How do I configure Azure App Service custom domains?` |
