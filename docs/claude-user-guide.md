@@ -227,6 +227,36 @@ Why did pipeline run 789 fail?
 
 ---
 
+## Checking GitHub Actions Workflows
+
+If your team uses GitHub Actions, Claude can check workflow runs, diagnose failures, and show you what's happening — all from a link or a simple question. No skill activation needed; the GitHub plugin loads automatically.
+
+**Example prompts:**
+
+```
+Why did this workflow fail? https://github.com/org/repo/actions/runs/12345
+```
+
+```
+Show me the recent workflow runs for our repo
+```
+
+```
+What's failing in CI on the main branch?
+```
+
+```
+Show me the logs from the last failed workflow run
+```
+
+```
+Re-run the failed jobs in the latest workflow run
+```
+
+**Tip:** Pasting a GitHub Actions workflow URL is the fastest way to get help — Claude will pull the logs and pinpoint the failure. You can also ask follow-up questions like "how do I fix that?" and Claude will suggest a solution.
+
+---
+
 ## Communicating with Your Team
 
 Send Slack messages, check what's been said in a channel, or draft announcements.
@@ -309,7 +339,8 @@ Write a bash script that backs up our database before deployment
 |---|---|
 | See my sprint work | `/azure-devops Show my assigned items in the current sprint` |
 | Create a work item | `/azure-devops Create a bug: Login page returns 500 on empty email` |
-| Check pipeline status | `/azure-devops Show recent pipeline runs` |
+| Check ADO pipeline status | `/azure-devops Show recent pipeline runs` |
+| Debug a GitHub Actions failure | `Why did this workflow fail? <paste URL>` |
 | Review a PR | `Review PR #42` |
 | Write a document | `Help me draft a design doc for ...` |
 | Update Confluence | `Help me update our runbook in Confluence` |
