@@ -158,10 +158,3 @@
   register: ghostty_result
   changed_when: "'already installed' not in ghostty_result.stderr"
   failed_when: ghostty_result.rc != 0 and 'already installed' not in ghostty_result.stderr
-- name: install ghostty on Ubuntu
-  when:
-    - ansible_facts['distribution'] == 'Ubuntu'
-  ansible.builtin.apt:
-    name: ghostty
-    state: present
-  become: true

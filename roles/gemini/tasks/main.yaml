@@ -1,0 +1,47 @@
+---
+- name: check if google gemini is installed on macOS
+  when: ansible_facts['os_family'] == 'Darwin'
+  ansible.builtin.stat:
+    path: /Applications/Gemini.app
+  register: gemini_app
+
+- name: download google gemini dmg on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not gemini_app.stat.exists
+  ansible.builtin.get_url:
+    url: https://dl.google.com/release2/j33ro/release/Gemini.dmg
+    dest: /tmp/Gemini.dmg
+    mode: "0644"
+
+- name: mount google gemini dmg on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not gemini_app.stat.exists
+  ansible.builtin.shell: hdiutil attach /tmp/Gemini.dmg -nobrowse -quiet
+  register: gemini_mount
+
+- name: install google gemini on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not gemini_app.stat.exists
+  ansible.builtin.copy:
+    src: /Volumes/Gemini/Gemini.app
+    dest: /Applications/Gemini.app
+    remote_src: true
+    mode: preserve
+
+- name: unmount google gemini dmg on macOS
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not gemini_app.stat.exists
+  ansible.builtin.shell: hdiutil detach /Volumes/Gemini -quiet
+  failed_when: false
+
+- name: clean up google gemini dmg
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - not gemini_app.stat.exists
+  ansible.builtin.file:
+    path: /tmp/Gemini.dmg
+    state: absent

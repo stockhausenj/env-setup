@@ -27,3 +27,7 @@
         name: tmux
     - include_role:
         name: claude
+    - include_role:
+        name: gemini
+    - include_role:
+        name: openai

@@ -1,0 +1,6 @@
+---
+- name: install chatgpt on macOS
+  when: ansible_facts['os_family'] == 'Darwin'
+  community.general.homebrew_cask:
+    name: chatgpt
+    state: present
