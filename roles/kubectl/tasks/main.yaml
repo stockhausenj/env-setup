@@ -43,9 +43,7 @@
 - name: Add Kubernetes apt signing key on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
-  ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubectl_minor_version }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg --yes
-  args:
-    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubectl_minor_version }}/deb/Release.key | gpg --batch --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg --yes && chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   become: true
 
 - name: Add Kubernetes apt repository on Ubuntu
