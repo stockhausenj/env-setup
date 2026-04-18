@@ -13,12 +13,51 @@
   community.general.homebrew:
     name: kubectl
     state: present
+- name: Install apt-transport-https and ca-certificates on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+  become: true
+
+- name: Create keyrings directory on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Add Kubernetes apt signing key on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ kubectl_version | regex_replace('\\.[0-9]+$', '') }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg --yes
+  args:
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  become: true
+
+- name: Add Kubernetes apt repository on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ kubectl_version | regex_replace('\\.[0-9]+$', '') }}/deb/ /"
+    filename: kubernetes
+    state: present
+  become: true
+
 - name: Install kubectl on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.apt:
     name: kubectl
     state: present
+    update_cache: true
   become: true
 
 # kube-ps1
