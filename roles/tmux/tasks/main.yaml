@@ -17,7 +17,7 @@
     state: latest
 
 # Ubuntu - Install ghostty terminfo (needed when SSH'ing from Ghostty)
-- name: Install ghostty terminfo (Ubuntu)
+- name: Check if ghostty terminfo is installed (Ubuntu)
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.shell: infocmp xterm-ghostty
@@ -25,11 +25,20 @@
   changed_when: false
   failed_when: false
 
-- name: Download and install ghostty terminfo (Ubuntu)
+- name: Copy ghostty terminfo file (Ubuntu)
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
     - ghostty_terminfo_check.rc != 0
-  ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ghostty-org/ghostty/main/src/terminfo/ghostty.terminfo | tic -x -
+  ansible.builtin.copy:
+    src: xterm-ghostty.terminfo
+    dest: /tmp/xterm-ghostty.terminfo
+    mode: '0644'
+
+- name: Install ghostty terminfo (Ubuntu)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - ghostty_terminfo_check.rc != 0
+  ansible.builtin.shell: tic -x /tmp/xterm-ghostty.terminfo
   become: true
 
 # All OS - Install TPM
