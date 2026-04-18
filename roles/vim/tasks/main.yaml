@@ -23,15 +23,22 @@
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.get_url:
-    url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
-    dest: /tmp/nvim-linux64.tar.gz
+    url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+    dest: /tmp/nvim-linux-x86_64.tar.gz
     mode: '0644'
     force: true
+- name: Remove old Neovim install directory
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.file:
+    path: /opt/nvim-linux-x86_64
+    state: absent
+  become: true
 - name: Extract Neovim binary
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.unarchive:
-    src: /tmp/nvim-linux64.tar.gz
+    src: /tmp/nvim-linux-x86_64.tar.gz
     dest: /opt
     remote_src: true
   become: true
@@ -39,7 +46,7 @@
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.file:
-    path: /opt/nvim-linux64/bin/nvim
+    path: /opt/nvim-linux-x86_64/bin/nvim
     mode: "0755"
     state: file
   become: true
@@ -47,7 +54,7 @@
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.file:
-    src: /opt/nvim-linux64/bin/nvim
+    src: /opt/nvim-linux-x86_64/bin/nvim
     dest: /usr/bin/nvim
     state: link
   become: true
