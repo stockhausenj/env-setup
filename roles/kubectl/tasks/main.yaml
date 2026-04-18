@@ -164,17 +164,26 @@
     - ansible_facts['distribution'] == 'Ubuntu'
   ansible.builtin.set_fact:
     k9s_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' }}"
+- name: Check if k9s is installed on Ubuntu
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.stat:
+    path: /usr/local/bin/k9s
+  register: k9s_installed
+
 - name: Download k9s on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
+    - not k9s_installed.stat.exists
   ansible.builtin.unarchive:
     src: "https://github.com/derailed/k9s/releases/download/v{{ k9_version }}/k9s_Linux_{{ k9s_arch }}.tar.gz"
     dest: /tmp
     remote_src: true
-    creates: /usr/local/bin/k9s
+
 - name: Install k9s binary on Ubuntu
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
+    - not k9s_installed.stat.exists
   ansible.builtin.copy:
     src: /tmp/k9s
     dest: /usr/local/bin/k9s
