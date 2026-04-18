@@ -16,6 +16,22 @@
     name: tmux
     state: latest
 
+# Ubuntu - Install ghostty terminfo (needed when SSH'ing from Ghostty)
+- name: Install ghostty terminfo (Ubuntu)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.shell: infocmp xterm-ghostty
+  register: ghostty_terminfo_check
+  changed_when: false
+  failed_when: false
+
+- name: Download and install ghostty terminfo (Ubuntu)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - ghostty_terminfo_check.rc != 0
+  ansible.builtin.shell: curl -fsSL https://raw.githubusercontent.com/ghostty-org/ghostty/main/src/terminfo/ghostty.terminfo | tic -x -
+  become: true
+
 # All OS - Install TPM
 - name: Install tmux plugin manager (TPM)
   ansible.builtin.git:
