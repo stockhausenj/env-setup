@@ -73,8 +73,16 @@
     name: claude
     state: present
 
-- name: check if claude desktop is installed on Ubuntu (WSL)
+- name: check if running in WSL
   when: ansible_facts['distribution'] == 'Ubuntu'
+  ansible.builtin.stat:
+    path: /proc/sys/fs/binfmt_misc/WSLInterop
+  register: wsl_check
+
+- name: check if claude desktop is installed on Ubuntu (WSL)
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - wsl_check.stat.exists
   ansible.builtin.shell: cmd.exe /c "winget list --id Anthropic.Claude"
   register: claude_desktop_check
   changed_when: false
@@ -83,6 +91,7 @@
 - name: install claude desktop on Ubuntu (WSL)
   when:
     - ansible_facts['distribution'] == 'Ubuntu'
+    - wsl_check.stat.exists
     - claude_desktop_check.rc != 0 or 'Anthropic.Claude' not in claude_desktop_check.stdout
   ansible.builtin.shell: cmd.exe /c "winget install Anthropic.Claude --accept-source-agreements --accept-package-agreements"
   register: claude_desktop_install
