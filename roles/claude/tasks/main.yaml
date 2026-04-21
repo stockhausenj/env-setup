@@ -104,6 +104,14 @@
   changed_when: false
   failed_when: false
 
+- name: clean up stale claude cli directory
+  when: claude_check.rc != 0
+  ansible.builtin.file:
+    path: /usr/local/lib/node_modules/@anthropic-ai/claude-code
+    state: absent
+  become: "{{ true if ansible_facts['distribution'] == 'Ubuntu' else false }}"
+  failed_when: false
+
 - name: install claude cli
   when: claude_check.rc != 0
   ansible.builtin.shell: npm install -g @anthropic-ai/claude-code

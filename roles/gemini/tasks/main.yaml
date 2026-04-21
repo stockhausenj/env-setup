@@ -14,29 +14,17 @@
     dest: /tmp/Gemini.dmg
     mode: "0644"
 
-- name: mount google gemini dmg on macOS
+- name: mount and install google gemini on macOS
   when:
     - ansible_facts['os_family'] == 'Darwin'
     - not gemini_app.stat.exists
-  ansible.builtin.shell: hdiutil attach /tmp/Gemini.dmg -nobrowse -quiet
-  register: gemini_mount
-
-- name: install google gemini on macOS
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
-    - not gemini_app.stat.exists
-  ansible.builtin.copy:
-    src: /Volumes/Gemini/Gemini.app
-    dest: /Applications/Gemini.app
-    remote_src: true
-    mode: preserve
-
-- name: unmount google gemini dmg on macOS
-  when:
-    - ansible_facts['os_family'] == 'Darwin'
-    - not gemini_app.stat.exists
-  ansible.builtin.shell: hdiutil detach /Volumes/Gemini -quiet
-  failed_when: false
+  ansible.builtin.shell: |
+    hdiutil attach /tmp/Gemini.dmg -nobrowse -quiet
+    vol=$(find /Volumes -maxdepth 1 -name "Gemini*" -type d | head -1)
+    cp -R "$vol/Gemini.app" /Applications/Gemini.app
+    hdiutil detach "$vol" -quiet
+  args:
+    creates: /Applications/Gemini.app
 
 - name: clean up google gemini dmg
   when:
